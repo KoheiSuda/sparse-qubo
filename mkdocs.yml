@@ -1,0 +1,52 @@
+site_name: sparse-qubo
+repo_url: https://github.com/KoheiSuda/sparse-qubo
+site_url: https://KoheiSuda.github.io/sparse-qubo
+site_description: Sparse QUBO formulation for efficient embedding on hardware.
+site_author: Kohei Suda
+edit_uri: edit/main/docs/
+repo_name: KoheiSuda/sparse-qubo
+copyright: Maintained by <a href="https://KoheiSuda.com">KoheiSuda</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/sparse_qubo"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/KoheiSuda/sparse-qubo
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/sparse-qubo
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
