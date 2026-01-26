@@ -1,4 +1,4 @@
-from ..permutation_channel import PermutationChannel
+from ..core.permutation_channel import PermutationChannel
 from .clos_network_base import ClosNetworkBase
 
 
