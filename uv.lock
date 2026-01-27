@@ -3,6 +3,32 @@ revision = 3
 requires-python = ">=3.12, <4.0"
 
 [[package]]
+name = "amplify"
+version = "1.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "typing-extensions" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9f/05/faa2272b4617425f873b6d82cf1c28085d9cd79b582a3c6365ddd199c212/amplify-1.4.1-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:fcc36ea0756ec89de217201371d8f9622ecf77600691591dfd64eded150764e7", size = 7160531, upload-time = "2025-10-18T02:53:32.63Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/af/dc924b496f846c06ab94daeca51aa67fbbf769ddb8c50d5fbc6fc586062b/amplify-1.4.1-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:3eb9b49622d0ea8a41714a65314fcc53f4a4908aa1e4ea5349387836976b1a89", size = 7528791, upload-time = "2025-10-18T02:53:36.46Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/11/96a0324c8691e5d6c9c22a37f5e4fb8d2011537d354fd7d3014a7b2d9e56/amplify-1.4.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:1607433173c30484cf1e1eb1e0f387a535838138a25bf7755d5d0504e781b3d2", size = 7479902, upload-time = "2025-10-18T02:58:22.45Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/31/b904285464022c88c808cc8457f327e5ef9b1643418f63e609eaacabf61f/amplify-1.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:22da586cac94d2980caa5bdfb62aed6dfac207f20f17444ed323333ab02c66ee", size = 7890528, upload-time = "2025-10-18T02:58:25.849Z" },
+    { url = "https://files.pythonhosted.org/packages/48/f7/9448c73d76d63570864211ece4254f39685d8e5756348750cfa555c5cbb4/amplify-1.4.1-cp312-cp312-win_amd64.whl", hash = "sha256:1066c1651b61c28ee906cde0152fc9edb6b11352e35ac47cdda71c108c1bfa03", size = 6136427, upload-time = "2025-10-18T02:53:39.569Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/e6/be4d4d13ff5100eb4e1504f1ab516694bbb06ae59f9263fb817ab9dc6419/amplify-1.4.1-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:e0a221beb592b8f0255347f85964e74a7464b9f8635c0694f040e5cbb855c8ca", size = 7160543, upload-time = "2025-10-18T02:53:42.89Z" },
+    { url = "https://files.pythonhosted.org/packages/03/8b/98bf95aa7db47296acd0e4a96095e7ca4f620bbb9bd70f8021c020f6c754/amplify-1.4.1-cp313-cp313-macosx_12_0_x86_64.whl", hash = "sha256:468f75144a30113ef3f48c1f9b5267bb6ed14fd3f77bd393908f1fe88eaf0e3a", size = 7528800, upload-time = "2025-10-18T02:53:45.802Z" },
+    { url = "https://files.pythonhosted.org/packages/80/4f/371f5ea55f241b87787cd190621fc91e090d83c679b2ec76084058d48d96/amplify-1.4.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:a434decdf68d392963a381118de01e9ae17005abe2b04a5fbd353fa58a7ab443", size = 7479886, upload-time = "2025-10-18T02:58:29.119Z" },
+    { url = "https://files.pythonhosted.org/packages/3f/8a/1b11d12098084ff088d1f6caa5acf57ff2f6407b11790911721c45713339/amplify-1.4.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:aa4438f40f181bb2d9a39891d6ba6a6899812dbb63351ef763e444222d7e92cb", size = 7890530, upload-time = "2025-10-18T02:58:32.651Z" },
+    { url = "https://files.pythonhosted.org/packages/72/55/cb7d54b66ba7074f3680caa38cc1359f4fc93ebf3f32f340bcfb848ffa27/amplify-1.4.1-cp313-cp313-win_amd64.whl", hash = "sha256:def66349c4601634f72a8533be4a6cb5e344f35d5280da7d251055e2dd4b59f3", size = 6136438, upload-time = "2025-10-18T02:53:49.26Z" },
+    { url = "https://files.pythonhosted.org/packages/52/7a/e2a667b0706076cfd59e73f45753454437bf8eb3d4aad9dbaeb9aafd24ad/amplify-1.4.1-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:bf69b7ce4c816cfb2fea6e65b51f867fc5fcdbca9bb15718586739d0c0e74c82", size = 7161903, upload-time = "2025-10-18T02:53:52.548Z" },
+    { url = "https://files.pythonhosted.org/packages/46/8d/345de45c5d6540bfb3f52bd435bb170087e94f46de30c0f533934594b2a9/amplify-1.4.1-cp314-cp314-macosx_12_0_x86_64.whl", hash = "sha256:5f86f33114bb7d9b186d5e15042733370427e3e24b529138484e7c75d1e78880", size = 7531858, upload-time = "2025-10-18T02:53:55.801Z" },
+    { url = "https://files.pythonhosted.org/packages/61/c8/35328451b9a9da352e54523f9e193f9f27ccaf8715fa20f78e0157890066/amplify-1.4.1-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:22e6e6bca06908533a6418d4281dbae7dcebe75faf9951e98cf58564b26357d8", size = 7481494, upload-time = "2025-10-18T02:58:36.204Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/f1/580ab302d2ac9cd12bfd879ed20fb8471e1abd08d83afba7d22ef73ae97e/amplify-1.4.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:8cc3a0cc2ac76b649f7e0f3d2d34b934c135bd4108af8e2b590b1658c58a4195", size = 7893070, upload-time = "2025-10-18T02:58:39.997Z" },
+    { url = "https://files.pythonhosted.org/packages/41/f0/91397f904647aba1dae994e61d910a9254a20e586bd1cb21cb027116014e/amplify-1.4.1-cp314-cp314-win_amd64.whl", hash = "sha256:71571a9e36b2ff5ac2e36bb7539863db216c597f74fb2baf434c660e797a7eed", size = 6400847, upload-time = "2025-10-18T02:53:58.937Z" },
+]
+
+[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1397,6 +1423,7 @@ name = "sparse-qubo"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
+    { name = "amplify" },
     { name = "dimod" },
     { name = "matplotlib" },
     { name = "networkx" },
@@ -1420,6 +1447,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "amplify", specifier = ">=1.4.1" },
     { name = "dimod", specifier = ">=0.12.21" },
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "networkx", specifier = ">=3.6.1" },

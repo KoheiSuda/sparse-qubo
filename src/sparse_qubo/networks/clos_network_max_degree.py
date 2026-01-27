@@ -1,7 +1,7 @@
 from typing import ClassVar
 
-from ..node import NodeAttribute, VariableNode
-from ..permutation_channel import PermutationChannel
+from ..core.node import NodeAttribute, VariableNode
+from ..core.permutation_channel import PermutationChannel
 from .clos_network_base import ClosNetworkBase
 
 

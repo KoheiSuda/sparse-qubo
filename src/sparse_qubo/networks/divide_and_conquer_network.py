@@ -1,10 +1,10 @@
 from collections import defaultdict
 from math import ceil
 
-from ..base_network import ISwitchingNetwork
+from ..core.base_network import ISwitchingNetwork
+from ..core.node import NodeAttribute, VariableNode
+from ..core.permutation_channel import PermutationChannel
 from ..networks.bubble_sort_network import BubbleSortNetwork
-from ..node import NodeAttribute, VariableNode
-from ..permutation_channel import PermutationChannel
 
 
 # Divide up and down, and apply BubbleSortNetwork when it becomes one-hot
