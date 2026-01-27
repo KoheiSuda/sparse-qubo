@@ -15,6 +15,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
+    "amplify>=1.4.1",
     "dimod>=0.12.21",
     "matplotlib>=3.10.8",
     "networkx>=3.6.1",

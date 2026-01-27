@@ -8,8 +8,8 @@ from .permutation_channel import QUBO, PermutationChannel
 class ConstraintType(StrEnum):
     ONE_HOT = "one_hot"
     EQUAL_TO = "equal_to"
-    LESS_THAN = "less_than"
-    GREATER_THAN = "greater_than"
+    LESS_EQUAL = "less_equal"
+    GREATER_EQUAL = "greater_equal"
     CLAMP = "clamp"
 
 
@@ -40,7 +40,7 @@ def get_initial_nodes(
             )
             for i in range(size)
         ]
-    elif constraint_type == ConstraintType.LESS_THAN:
+    elif constraint_type == ConstraintType.LESS_EQUAL:
         if not (c1 is not None and 0 < c1 <= size):
             raise ValueError("c1 must be between 0 and size")
         right_nodes = [
@@ -50,7 +50,7 @@ def get_initial_nodes(
             )
             for i in range(size)
         ]
-    elif constraint_type == ConstraintType.GREATER_THAN:
+    elif constraint_type == ConstraintType.GREATER_EQUAL:
         if not (c1 is not None and 0 <= c1 < size):
             raise ValueError("c1 must be between 0 and size")
         right_nodes = [
