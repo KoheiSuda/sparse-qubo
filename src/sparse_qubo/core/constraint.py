@@ -25,7 +25,7 @@ def get_initial_nodes(
     constraint_type: ConstraintType,
     c1: int | None = None,
     c2: int | None = None,
-    exponentiation: bool = False,  # 追加
+    exponentiation: bool = False,
 ) -> tuple[list[VariableNode], list[VariableNode]]:
     original_size = len(variables)
     target_size = original_size
