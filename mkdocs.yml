@@ -9,13 +9,15 @@ copyright: Maintained by <a href="https://KoheiSuda.com">KoheiSuda</a>.
 
 nav:
   - Home: index.md
-  - Modules: modules.md
+  - Getting Started: getting-started.md
+  - Examples: examples.md
+  - API Reference: modules.md
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
-          paths: ["src/sparse_qubo"]
+          paths: ["src"]
 theme:
   name: material
   feature:
