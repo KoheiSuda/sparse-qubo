@@ -1,1 +1,1 @@
-::: sparse_qubo.foo
+::: sparse_qubo.core.permutation_channel
