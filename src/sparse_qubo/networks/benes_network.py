@@ -1,5 +1,5 @@
-from ..core.permutation_channel import PermutationChannel
-from .clos_network_base import ClosNetworkBase
+from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class BenesNetwork(ClosNetworkBase):

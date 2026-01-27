@@ -1,8 +1,8 @@
 from math import log2
 
-from ..core.base_network import ISwitchingNetwork
-from ..core.node import NodeAttribute, VariableNode
-from ..core.permutation_channel import PermutationChannel
+from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.node import NodeAttribute, VariableNode
+from sparse_qubo.core.permutation_channel import PermutationChannel
 
 
 # TODO: The way reverse is handled is not clean

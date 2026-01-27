@@ -1,8 +1,8 @@
 from typing import ClassVar
 
-from ..core.node import NodeAttribute, VariableNode
-from ..core.permutation_channel import PermutationChannel
-from .clos_network_base import ClosNetworkBase
+from sparse_qubo.core.node import NodeAttribute, VariableNode
+from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class AdhocNetworkWithMinimumDegree:
@@ -54,7 +54,7 @@ class AdhocNetworkWithMinimumDegree:
 
 class ClosNetworkWithMaxDegree(ClosNetworkBase):
     num_elements_dict: ClassVar[dict[int, int]] = {}
-    max_degree: ClassVar[int | None] = None
+    max_degree: ClassVar[int] = 5  # TODO: Enable user to set this as a parameter
 
     @classmethod
     def reset_max_degree(cls, new_max: int) -> None:
