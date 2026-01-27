@@ -1,1 +1,1 @@
-::: sparse_qubo.foo
+::: core.node

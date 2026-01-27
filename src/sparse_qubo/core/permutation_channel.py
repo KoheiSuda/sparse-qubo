@@ -124,6 +124,8 @@ class PermutationChannel(BaseModel):
         # Determine the layer of each channel
         while waiting_left_nodes:
             node, layer_number = waiting_left_nodes.pop()
+            if node not in left_node_to_channel:
+                continue
             if left_node_to_channel[node] in channel_idx_to_layer_number:
                 continue
             channel_idx_to_layer_number[left_node_to_channel[node]] = layer_number

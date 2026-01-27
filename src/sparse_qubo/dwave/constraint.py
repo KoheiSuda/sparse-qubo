@@ -29,7 +29,7 @@ def naive_constraint(
         case ConstraintType.GREATER_EQUAL:
             if not (c1 is not None and 0 <= c1 <= size):
                 raise ValueError("c1 must be between 0 and size")
-            bqm.add_linear_inequality_constraint(terms, lagrange_multiplier, label="s", lb=c1)
+            bqm.add_linear_inequality_constraint(terms, lagrange_multiplier, label="s", lb=c1, ub=size)
         case ConstraintType.CLAMP:
             if not (c1 is not None and c2 is not None and 0 <= c1 <= c2 <= size):
                 raise ValueError("c1 and c2 must be between 0 and size")
