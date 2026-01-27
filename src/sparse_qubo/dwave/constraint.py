@@ -1,6 +1,7 @@
 import dimod
 import dimod.variables
 
+from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
 
 
@@ -42,24 +43,21 @@ def naive_constraint(
 def constraint(
     variables: dimod.variables.Variables,
     constraint_type: ConstraintType,
-    network_name: str = "divide_and_conquer",
+    network_type: NetworkType = NetworkType.DIVIDE_AND_CONQUER,
     c1: int | None = None,
     c2: int | None = None,
     threshold: int | None = None,
 ) -> dimod.BinaryQuadraticModel:
-    if network_name == "naive":
+    if network_type == NetworkType.NAIVE:
         bqm = naive_constraint(variables, constraint_type, c1, c2)
         return bqm
 
     variable_names = [str(v) for v in variables]
-    if network_name == "divide_and_conquer":
-        qubo = get_constraint_qubo(variable_names, constraint_type, network_name, c1, c2, threshold)
-        bqm = dimod.BinaryQuadraticModel(
-            qubo.linear,
-            qubo.quadratic,
-            qubo.constant,
-            dimod.BINARY,
-        )
-        return bqm
-    else:
-        raise NotImplementedError
+    qubo = get_constraint_qubo(variable_names, constraint_type, network_type, c1, c2, threshold)
+    bqm = dimod.BinaryQuadraticModel(
+        qubo.linear,
+        qubo.quadratic,
+        qubo.constant,
+        dimod.BINARY,
+    )
+    return bqm

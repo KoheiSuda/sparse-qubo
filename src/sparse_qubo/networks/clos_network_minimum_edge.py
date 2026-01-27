@@ -1,8 +1,8 @@
 from typing import ClassVar
 
-from ..core.node import NodeAttribute, VariableNode
-from ..core.permutation_channel import PermutationChannel
-from .clos_network_base import ClosNetworkBase
+from sparse_qubo.core.node import NodeAttribute, VariableNode
+from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class ClosNetworkMinimumEdge(ClosNetworkBase):

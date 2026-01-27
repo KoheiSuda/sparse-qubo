@@ -1,7 +1,19 @@
 from abc import ABC, abstractmethod
+from enum import StrEnum
 
-from .node import NodeAttribute, VariableNode
-from .permutation_channel import PermutationChannel
+from sparse_qubo.core.node import NodeAttribute, VariableNode
+from sparse_qubo.core.permutation_channel import PermutationChannel
+
+
+class NetworkType(StrEnum):
+    NAIVE = "naive"
+    BENES = "benes"
+    BITONIC_SORT = "bitonic_sort"
+    BUBBLE_SORT = "bubble_sort"
+    CLOS_NETWORK_MAX_DEGREE = "clos_network_max_degree"
+    CLOS_NETWORK_MIN_EDGE = "clos_network_min_edge"
+    DIVIDE_AND_CONQUER = "divide_and_conquer"
+    ODDEVEN_MERGE_SORT = "oddeven_merge_sort"
 
 
 # Abstract base class for switching networks

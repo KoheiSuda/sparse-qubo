@@ -1,10 +1,10 @@
 from collections import defaultdict
 from math import ceil
 
-from ..core.base_network import ISwitchingNetwork
-from ..core.node import NodeAttribute, VariableNode
-from ..core.permutation_channel import PermutationChannel
-from ..networks.bubble_sort_network import BubbleSortNetwork
+from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.node import NodeAttribute, VariableNode
+from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
 
 
 # Divide up and down, and apply BubbleSortNetwork when it becomes one-hot

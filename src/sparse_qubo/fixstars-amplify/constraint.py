@@ -1,5 +1,6 @@
 import amplify
 
+from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
 from sparse_qubo.core.permutation_channel import QUBO
 
@@ -53,20 +54,16 @@ def generate_amplify_model(variables: list[amplify.Variable], qubo: QUBO) -> amp
 def constraint(
     variables: list[amplify.Variable],
     constraint_type: ConstraintType,
-    network_name: str = "divide_and_conquer",
+    network_type: NetworkType = NetworkType.DIVIDE_AND_CONQUER,
     c1: int | None = None,
     c2: int | None = None,
     threshold: int | None = None,
 ) -> amplify.Model:
-    if network_name == "naive":
+    if network_type == NetworkType.NAIVE:
         model = naive_constraint(variables, constraint_type, c1, c2)
         return model
 
     variable_names = [v.name for v in variables]
-    if network_name == "divide_and_conquer":
-        qubo = get_constraint_qubo(variable_names, constraint_type, network_name, c1, c2, threshold)
-        model = generate_amplify_model(variables, qubo)
-        return model
-
-    else:
-        raise NotImplementedError
+    qubo = get_constraint_qubo(variable_names, constraint_type, network_type, c1, c2, threshold)
+    model = generate_amplify_model(variables, qubo)
+    return model
