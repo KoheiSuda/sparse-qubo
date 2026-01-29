@@ -40,6 +40,10 @@ dev = [
     "mkdocs-material>=9.7.0",
     "mkdocstrings[python]>=1.0.0",
     "types-networkx>=3.6.1.20251220",
+    "ipykernel>=7.1.0",
+    "pandas>=3.0.0",
+    "dwave-cloud-client>=0.14.4",
+    "dwave-ocean-sdk>=9.3.0",
 ]
 
 [build-system]
@@ -112,6 +116,7 @@ max-complexity = 15
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+"examples/*" = ["S101"]
 
 [tool.ruff.format]
 preview = true
