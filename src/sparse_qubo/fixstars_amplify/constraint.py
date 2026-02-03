@@ -1,3 +1,9 @@
+"""Fixstars Amplify integration: build Amplify models from constraint types and network types.
+
+Use create_constraint_amplify (from sparse_qubo) or constraint() from this module
+to obtain an amplify.Model for use with Amplify solvers.
+"""
+
 import amplify
 
 from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
@@ -11,6 +17,7 @@ def naive_constraint(
     c1: int | None = None,
     c2: int | None = None,
 ) -> amplify.Model:
+    """Encode the constraint using Amplify's built-in one_hot/equal_to/less_equal/etc. (no switching network)."""
     size = len(variables)
     sum_poly: amplify.Poly = sum([amplify.Poly(v) for v in variables], amplify.Poly(0))
     match constraint_type:
@@ -39,6 +46,7 @@ def naive_constraint(
 
 
 def generate_amplify_model(variables: list[amplify.Variable], qubo: QUBO) -> amplify.Model:
+    """Build an Amplify model from a list of Amplify variables and a QUBO (linear + quadratic + constant)."""
     poly_map = {v.name: amplify.Poly(v) for v in variables}
     objectives = amplify.Poly(0)
 
@@ -59,6 +67,7 @@ def constraint(
     c2: int | None = None,
     threshold: int | None = None,
 ) -> amplify.Model:
+    """Build an Amplify model for the given constraint using the specified network type (or NAIVE)."""
     if network_type == NetworkType.NAIVE:
         model = naive_constraint(variables, constraint_type, c1, c2)
         return model

@@ -1,3 +1,9 @@
+"""Switching network types and base class for network implementations.
+
+NetworkType enumerates available formulations. ISwitchingNetwork is the abstract
+base for networks that produce a list of Switch elements.
+"""
+
 from abc import ABC, abstractmethod
 from enum import StrEnum
 
@@ -6,6 +12,8 @@ from sparse_qubo.core.switch import Switch
 
 
 class NetworkType(StrEnum):
+    """Identifier for each switching network (or naive) formulation."""
+
     NAIVE = "naive"
     BENES = "benes"
     BITONIC_SORT = "bitonic_sort"
@@ -16,8 +24,9 @@ class NetworkType(StrEnum):
     ODDEVEN_MERGE_SORT = "oddeven_merge_sort"
 
 
-# Abstract base class for switching networks
 class ISwitchingNetwork(ABC):
+    """Abstract base for switching networks that produce a list of Switch elements."""
+
     @classmethod
     @abstractmethod
     def _generate_original_network(
@@ -27,9 +36,9 @@ class ISwitchingNetwork(ABC):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Return the raw list of Switch elements for the given left/right nodes."""
         pass
 
-    # Generate a network with variables that can be fixed to scalars removed
     @classmethod
     def generate_network(
         cls,
@@ -38,6 +47,7 @@ class ISwitchingNetwork(ABC):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Build the switching network, simplifying switches when nodes are fixed (ALWAYS_ZERO/ALWAYS_ONE)."""
         network: list[Switch] = cls._generate_original_network(left_nodes, right_nodes, threshold, reverse)
 
         # Place switch while managing the set of rightmost nodes

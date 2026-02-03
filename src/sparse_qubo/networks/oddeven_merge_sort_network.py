@@ -1,3 +1,5 @@
+"""Implementation of Odd-even merge sort network: Batcher's algorithm."""
+
 from math import log2
 
 from sparse_qubo.core.network import ISwitchingNetwork
@@ -5,9 +7,9 @@ from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import Switch
 
 
-# TODO: The way reverse is handled is not clean
-# Generate a network representing Batcher's odd-even merge sort
 class OddEvenMergeSortNetwork(ISwitchingNetwork):
+    """Odd-even merge sort (Batcher) network; requires power-of-2 variable count."""
+
     @classmethod
     def _generate_original_network(
         cls,
@@ -16,6 +18,7 @@ class OddEvenMergeSortNetwork(ISwitchingNetwork):
         threshold: int | None = None,
         reverse: bool = True,
     ) -> list[Switch]:
+        """Return the list of Switch elements for the odd-even merge sort network."""
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         if len(left_names) != len(right_names):

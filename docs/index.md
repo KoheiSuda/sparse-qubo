@@ -7,20 +7,21 @@
 
 **Sparse QUBO formulation for efficient embedding on hardware.**
 
-`sparse-qubo` is a Python library that provides sparse QUBO (Quadratic Unconstrained Binary Optimization) formulations for various constraint types, optimized for embedding on quantum annealing hardware such as D-Wave systems.
+`sparse-qubo` is a Python library that provides sparse QUBO (Quadratic Unconstrained Binary Optimization) formulations specifically for N-hot equality and inequality constraints. Constraint QUBOs are built from **switching networks**: each network is a list of **Switch** elements (left/right variable sets and constants), and the library converts them into QUBOs optimized for embedding on quantum annealing hardware (e.g. D-Wave) or other solvers.
 
 ## Features
 
-- **Multiple Constraint Types**: Support for one-hot, equal-to, less-equal, greater-equal, and clamp constraints
-- **Various Network Architectures**: Multiple switching network implementations including:
+- **Multiple constraint types**: One-hot, equal-to, less-equal, greater-equal, and clamp
+- **Switching networks**: Constraint formulations are implemented as switching networks (each network is a list of **Switch** objects), which yield small quadratic terms
+- **Multiple network architectures**:
   - Benes network
   - Bitonic sort network
   - Bubble sort network
   - Clos network (max degree and minimum edge variants)
   - Divide-and-conquer network
   - Odd-even merge sort network
-- **Hardware Optimization**: Designed to minimize the number of variables and edges for efficient hardware embedding
-- **D-Wave Integration**: Direct integration with D-Wave's `dimod` library
+- **Backends**: D-Wave (`dimod.BQM`) and Fixstars Amplify (`amplify.Model`)
+- **Examples**: Repository includes example problems (shift scheduling, TSP) with notebooks and benchmarks
 
 ## Installation
 
@@ -36,69 +37,67 @@ uv add sparse-qubo
 
 ## Quick Start
 
-### Basic Usage
+### D-Wave (dimod)
 
 Create a one-hot constraint using the divide-and-conquer network:
 
 ```python
 import dimod
-from sparse_qubo.dwave.constraint import constraint
-from sparse_qubo.core.constraint import ConstraintType
-from sparse_qubo.core.base_network import NetworkType
+import sparse_qubo
 
-# Define variables
 variables = dimod.variables.Variables(["x0", "x1", "x2", "x3"])
 
-# Create a one-hot constraint
-bqm = constraint(
+# One-hot constraint
+bqm = sparse_qubo.create_constraint_dwave(
     variables,
-    ConstraintType.ONE_HOT,
-    NetworkType.DIVIDE_AND_CONQUER
+    sparse_qubo.ConstraintType.ONE_HOT,
+    sparse_qubo.NetworkType.DIVIDE_AND_CONQUER,
 )
-
-# Use with D-Wave sampler
-# sampler = dimod.SimulatedAnnealingSampler()
-# sampleset = sampler.sample(bqm)
 ```
 
-### Different Constraint Types
+### Constraint types and network types
 
 ```python
-# Equal-to constraint: sum of variables equals 2
-bqm = constraint(variables, ConstraintType.EQUAL_TO, c1=2)
+# Equal-to: sum of variables equals 2
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.EQUAL_TO, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=2)
 
-# Less-equal constraint: sum of variables <= 3
-bqm = constraint(variables, ConstraintType.LESS_EQUAL, c1=3)
+# Less-equal: sum <= 3
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.LESS_EQUAL, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=3)
 
-# Greater-equal constraint: sum of variables >= 1
-bqm = constraint(variables, ConstraintType.GREATER_EQUAL, c1=1)
+# Naive formulation (single switch; no additional variables, denser quadratic terms)
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.ONE_HOT, sparse_qubo.NetworkType.NAIVE)
 
-# Clamp constraint: 1 <= sum of variables <= 3
-bqm = constraint(variables, ConstraintType.CLAMP, c1=1, c2=3)
+# Other networks (e.g. bubble sort network)
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.ONE_HOT, sparse_qubo.NetworkType.BUBBLE_SORT)
 ```
 
-### Different Network Types
+### Repository examples
 
-```python
-# Use Benes network (requires power of 2 size)
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.BENES)
+The `examples/` directory contains full problem setups:
 
-# Use bubble sort network
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.BUBBLE_SORT)
+- **Shift scheduling** (`examples/shift_scheduling/`): Demo notebook, problem builder (`create_scheduling_problem_bqm` using `sparse_qubo.create_constraint_dwave`), and benchmarks comparing `NetworkType.NAIVE` vs `NetworkType.DIVIDE_AND_CONQUER` on D-Wave
+- **TSP** (`examples/tsp/`): Problem builder and benchmarks for traveling salesman formulations
 
-# Use Clos network with maximum degree constraint
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.CLOS_NETWORK_MAX_DEGREE)
-```
+See [Examples](examples.md) for details and inline code samples.
+
+## Reference
+
+This library implements the sparse QUBO formulation described in:
+
+**Kohei Suda, Soshun Naito, Yoshihiko Hasegawa.** *Sparse QUBO Formulation for Efficient Embedding via Network-Based Decomposition of Equality and Inequality Constraints.* arXiv:2601.18108, 2026. <https://arxiv.org/abs/2601.18108>
+
+The paper provides a comprehensive description of the network-based constraint decomposition and the divide-and-conquer algorithm utilized in this library. Furthermore, it discusses the effectiveness of the method through experiments performed on D-Wave hardware.
 
 ## Documentation
 
-- [Getting Started](getting-started.md) - Detailed guide on using the library
-- [Examples](examples.md) - Code examples and use cases
-- [API Reference](modules.md) - Complete API documentation
+- [Getting Started](getting-started.md) — Concepts, constraint and network types, low-level API
+- [Examples](examples.md) — Inline examples and repository example overview
+- [Usage](usage.md) — Constraint prefix counter and variable naming
+- [API Reference](modules.md) — Module and class reference
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/KoheiSuda/sparse-qubo/blob/main/CONTRIBUTING.md) for guidelines.
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/KoheiSuda/sparse-qubo/blob/main/CONTRIBUTING.md) for guidelines.
 
 ## License
 
@@ -106,6 +105,6 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ## Links
 
-- **GitHub Repository**: <https://github.com/KoheiSuda/sparse-qubo/>
+- **GitHub**: <https://github.com/KoheiSuda/sparse-qubo/>
 - **Documentation**: <https://KoheiSuda.github.io/sparse-qubo/>
 - **PyPI**: <https://pypi.org/project/sparse-qubo/>

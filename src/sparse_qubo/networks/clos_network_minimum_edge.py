@@ -1,3 +1,5 @@
+"""Implementation of Clos network with minimum edge count: chooses (n, r) to minimize quadratic terms."""
+
 from typing import ClassVar
 
 from sparse_qubo.core.node import NodeAttribute, VariableNode
@@ -6,6 +8,8 @@ from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class ClosNetworkMinimumEdge(ClosNetworkBase):
+    """Clos network that minimizes the number of logical edges (quadratic terms)."""
+
     is_small_dict: ClassVar[dict[int, bool]] = dict.fromkeys(range(3), True)
     num_logical_edges_dict: ClassVar[dict[int, int]] = {0: 0, 1: 0, 2: 6}
 

@@ -1,3 +1,5 @@
+"""Implementation of Divide-and-conquer network: recursive division of the constraint."""
+
 from collections import defaultdict
 from math import ceil
 
@@ -7,8 +9,9 @@ from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
 
 
-# Divide up and down, and apply BubbleSortNetwork when it becomes one-hot
 class DivideAndConquerNetwork(ISwitchingNetwork):
+    """Divide-and-conquer switching network; uses BubbleSort when size is small or one-hot."""
+
     @classmethod
     def _generate_original_network(
         cls,
@@ -17,6 +20,7 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Return the list of Switch elements; recurses or uses BubbleSort for one-hot/small cases."""
         if len(left_nodes) != len(right_nodes):
             raise ValueError("left_nodes and right_nodes must have the same length")
 

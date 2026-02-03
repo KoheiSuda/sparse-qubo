@@ -1,16 +1,16 @@
 # Getting Started
 
-This guide will help you get started with `sparse-qubo` and understand its core concepts.
+This guide introduces core concepts and basic usage of `sparse-qubo`.
 
 ## Installation
 
-Install `sparse-qubo` using pip:
+Install with pip:
 
 ```bash
 pip install sparse-qubo
 ```
 
-Or using `uv`:
+Or with `uv`:
 
 ```bash
 uv add sparse-qubo
@@ -18,196 +18,147 @@ uv add sparse-qubo
 
 ## Core Concepts
 
-### QUBO Formulation
+### QUBO formulation
 
-QUBO (Quadratic Unconstrained Binary Optimization) is a mathematical formulation used in quantum annealing and other optimization methods. A QUBO problem is defined as:
+QUBO (Quadratic Unconstrained Binary Optimization) is a formulation used in quantum annealing and related methods. A QUBO is:
 
 $$
 \min \sum_{i} a_i x_i + \sum_{i<j} b_{ij} x_i x_j
 $$
 
-where $x_i \in \{0, 1\}$ are binary variables.
+with binary variables $x_i \in \{0, 1\}$.
 
-### Constraint Types
+### Switching networks and Switch
 
-`sparse-qubo` supports several constraint types:
+Constraint QUBOs in this library are built from **switching networks**. A switching network is a list of **Switch** objects. Each Switch has:
 
-- **ONE_HOT**: Exactly one variable must be 1
-- **EQUAL_TO**: Sum of variables equals a specific value
-- **LESS_EQUAL**: Sum of variables is less than or equal to a value
-- **GREATER_EQUAL**: Sum of variables is greater than or equal to a value
-- **CLAMP**: Sum of variables is between two values (inclusive)
+- **Left and right variable sets**: Two disjoint sets of binary variable names and optional integer constants. The constraint is encoded by requiring that the sum on the left equals the sum on the right (up to constants) for each Switch.
+- **QUBO conversion**: The function `Switch.to_qubo(switches)` turns a list of Switch elements into a single QUBO (variables, linear, quadratic, constant).
 
-### Network Types
+Different **network types** (e.g. divide-and-conquer, Benes, bubble sort) produce different sequences of Switch elements and thus different variable counts and sparsity. The **NAIVE** network type does not use switching networks; it encodes the constraint as a single squared term in the usual way (no additional variables, denser quadratic terms).
 
-Different network architectures are available, each optimized for different scenarios:
+### Constraint types
 
-- **DIVIDE_AND_CONQUER**: General-purpose, efficient for most cases
-- **BUBBLE_SORT**: Simple sorting network
-- **BITONIC_SORT**: Efficient for power-of-2 sizes
-- **BENES**: Optimal for power-of-2 sizes
-- **ODDEVEN_MERGE_SORT**: Batcher's odd-even merge sort
-- **CLOS_NETWORK_MAX_DEGREE**: Optimized for maximum degree constraints
-- **CLOS_NETWORK_MIN_EDGE**: Optimized for minimum edge count
+Supported constraint types:
 
-## Basic Usage
+| Type | Description |
+|------|-------------|
+| **ONE_HOT** | Exactly one variable is 1 |
+| **EQUAL_TO** | Sum of variables equals a value (`c1`) |
+| **LESS_EQUAL** | Sum of variables ≤ value (`c1`) |
+| **GREATER_EQUAL** | Sum of variables ≥ value (`c1`) |
+| **CLAMP** | Sum of variables in [`c1`, `c2`] |
 
-### Creating Constraints
+### Network types
 
-The main entry point is the `constraint` function from `sparse_qubo.dwave.constraint`:
+| Network | Notes |
+|---------|--------|
+| **DIVIDE_AND_CONQUER** | General-purpose; good default |
+| **BUBBLE_SORT** | Simple sorting network |
+| **BITONIC_SORT** / **BENES** / **ODDEVEN_MERGE_SORT** | Require power-of-2 variable size and automatically add auxiliary variables|
+| **CLOS_NETWORK_MAX_DEGREE** | Tune max degree (see network module) |
+| **CLOS_NETWORK_MIN_EDGE** | Minimize edge count |
+| **NAIVE** | No switching network; single squared term |
 
-```python
-import dimod
-from sparse_qubo.dwave.constraint import constraint
-from sparse_qubo.core.constraint import ConstraintType
-from sparse_qubo.core.base_network import NetworkType
+## Basic usage
 
-# Define variables
-variables = dimod.variables.Variables(["x0", "x1", "x2", "x3"])
+### Creating constraints (D-Wave / dimod)
 
-# Create a one-hot constraint
-bqm = constraint(
-    variables,
-    ConstraintType.ONE_HOT,
-    NetworkType.DIVIDE_AND_CONQUER
-)
-```
-
-### Working with D-Wave
-
-The `constraint` function returns a `dimod.BinaryQuadraticModel` that can be used directly with D-Wave samplers:
+Use `sparse_qubo.create_constraint_dwave` to get a `dimod.BinaryQuadraticModel`:
 
 ```python
 import dimod
-from sparse_qubo.dwave.constraint import constraint
-from sparse_qubo.core.constraint import ConstraintType
-from sparse_qubo.core.base_network import NetworkType
+import sparse_qubo
 
-# Create constraint
 variables = dimod.variables.Variables(["x0", "x1", "x2", "x3"])
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
 
-# Use with a sampler
-sampler = dimod.SimulatedAnnealingSampler()
-sampleset = sampler.sample(bqm, num_reads=100)
-
-# Get the best solution
-best_sample = sampleset.first.sample
-print(f"Best solution: {best_sample}")
-```
-
-### Using Different Constraint Types
-
-#### One-Hot Constraint
-
-Exactly one variable must be 1:
-
-```python
-bqm = constraint(variables, ConstraintType.ONE_HOT)
-```
-
-#### Equal-To Constraint
-
-Sum of variables equals a specific value:
-
-```python
-# Sum equals 2
-bqm = constraint(variables, ConstraintType.EQUAL_TO, c1=2)
-```
-
-#### Less-Equal Constraint
-
-Sum of variables is less than or equal to a value:
-
-```python
-# Sum <= 3
-bqm = constraint(variables, ConstraintType.LESS_EQUAL, c1=3)
-```
-
-#### Greater-Equal Constraint
-
-Sum of variables is greater than or equal to a value:
-
-```python
-# Sum >= 1
-bqm = constraint(variables, ConstraintType.GREATER_EQUAL, c1=1)
-```
-
-#### Clamp Constraint
-
-Sum of variables is between two values:
-
-```python
-# 1 <= Sum <= 3
-bqm = constraint(variables, ConstraintType.CLAMP, c1=1, c2=3)
-```
-
-### Choosing Network Types
-
-Different network types have different characteristics:
-
-- **DIVIDE_AND_CONQUER**: Good default choice, works for all constraint types
-- **BUBBLE_SORT**: Simple but may produce more variables
-- **BITONIC_SORT** / **BENES** / **ODDEVEN_MERGE_SORT**: Require power-of-2 sizes, but are efficient
-- **CLOS_NETWORK_MAX_DEGREE**: Optimized when you need to limit maximum degree
-- **CLOS_NETWORK_MIN_EDGE**: Optimized when you want to minimize edge count
-
-Example:
-
-```python
-# For power-of-2 sizes, Benes network is optimal
-variables = dimod.variables.Variables([f"x{i}" for i in range(8)])  # 8 is power of 2
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.BENES)
-```
-
-### Advanced Options
-
-#### Threshold Parameter
-
-For recursive networks, you can set a threshold to stop recursion early:
-
-```python
-bqm = constraint(
+# One-hot
+bqm = sparse_qubo.create_constraint_dwave(
     variables,
-    ConstraintType.ONE_HOT,
-    NetworkType.DIVIDE_AND_CONQUER,
-    threshold=4  # Stop recursion when size <= 4
+    sparse_qubo.ConstraintType.ONE_HOT,
+    sparse_qubo.NetworkType.DIVIDE_AND_CONQUER,
 )
 ```
 
-#### Reverse Parameter
-
-Some networks support a reverse parameter (used internally):
+### Constraint types (D-Wave)
 
 ```python
-# This is typically handled automatically
-bqm = constraint(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+# Equal-to: sum = 2
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.EQUAL_TO, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=2)
+
+# Less-equal: sum <= 3
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.LESS_EQUAL, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=3)
+
+# Greater-equal: sum >= 1
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.GREATER_EQUAL, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=1)
+
+# Clamp: 1 <= sum <= 3
+bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.CLAMP, sparse_qubo.NetworkType.DIVIDE_AND_CONQUER, c1=1, c2=3)
 ```
 
-## Low-Level API
+### Choosing a network type
 
-For more control, you can use the low-level API:
+- **DIVIDE_AND_CONQUER**: Default for most use cases; works for any size and constraint type.
+- **BUBBLE_SORT**: Simple; may use more variables.
+- **BITONIC_SORT**, **BENES**, **ODDEVEN_MERGE_SORT**: Only for power-of-2 variable count; can reduce edges.
+- **CLOS_NETWORK_MAX_DEGREE** / **CLOS_NETWORK_MIN_EDGE**: When you need to tune degree or edge count (see API and examples).
+- **NAIVE**: Single linear equality; fewer variables, denser QUBO.
+
+
+### Optional parameters
+
+- **threshold**: For recursive networks (e.g. DIVIDE_AND_CONQUER), stop recursion when group size ≤ `threshold`.
+- **var_prefix**: In the low-level API, optional prefix for auxiliary variables to avoid name collisions when merging QUBOs. See [Usage](usage.md).
+
+## Low-level API
+
+For direct access to QUBO or switching networks:
 
 ```python
 from sparse_qubo.core.constraint import get_constraint_qubo, ConstraintType
-from sparse_qubo.core.base_network import NetworkType
+from sparse_qubo.core.network import NetworkType
 
-# Get QUBO directly
+# Get QUBO (variables, linear, quadratic, constant)
 qubo = get_constraint_qubo(
     ["x0", "x1", "x2", "x3"],
     ConstraintType.ONE_HOT,
-    NetworkType.DIVIDE_AND_CONQUER
+    NetworkType.DIVIDE_AND_CONQUER,
 )
 
-# Access QUBO components
-print(f"Variables: {qubo.variables}")
-print(f"Linear terms: {qubo.linear}")
-print(f"Quadratic terms: {qubo.quadratic}")
-print(f"Constant: {qubo.constant}")
+print(qubo.variables, qubo.linear, qubo.quadratic, qubo.constant)
 ```
 
-## Next Steps
+To work with Switch lists (e.g. for custom analysis or visualization):
 
-- Check out [Examples](examples.md) for more detailed use cases
-- Read the [API Reference](modules.md) for complete documentation
-- See [CONTRIBUTING.md](https://github.com/KoheiSuda/sparse-qubo/blob/main/CONTRIBUTING.md) if you want to contribute
+```python
+from sparse_qubo.core.constraint import get_initial_nodes
+from sparse_qubo.core.network import NetworkType
+from sparse_qubo.networks.divide_and_conquer_network import DivideAndConquerNetwork
+
+variables = [f"x{i}" for i in range(4)]
+left_nodes, right_nodes = get_initial_nodes(variables, ConstraintType.ONE_HOT)
+switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
+# switches is list[Switch]; use Switch.to_qubo(switches) to get QUBO
+```
+
+## Fixstars Amplify
+
+For Amplify, use `sparse_qubo.create_constraint_amplify`. It accepts a list of `amplify.Variable` and returns an `amplify.Model`:
+
+```python
+import amplify
+import sparse_qubo
+
+variables = [amplify.Variable(f"x{i}") for i in range(4)]
+model = sparse_qubo.create_constraint_amplify(
+    variables,
+    sparse_qubo.ConstraintType.ONE_HOT,
+    sparse_qubo.NetworkType.DIVIDE_AND_CONQUER,
+)
+```
+
+## Next steps
+
+- [Examples](examples.md) — Inline examples and repository example overview
+- [Usage](usage.md) — Constraint prefix counter and variable naming
+- [API Reference](modules.md) — Full module and class reference

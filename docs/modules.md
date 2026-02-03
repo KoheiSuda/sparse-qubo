@@ -1,15 +1,17 @@
 # API Reference
 
-This page provides the complete API reference for `sparse-qubo`. Use the navigation on the left to explore different modules.
+This page lists the main modules and classes of `sparse-qubo`.
 
-## Core Modules
+**Public API (top-level package):** Use `sparse_qubo.create_constraint_dwave` for D-Wave/dimod BQMs and `sparse_qubo.create_constraint_amplify` for Fixstars Amplify models. Constraint and network types are `sparse_qubo.ConstraintType` and `sparse_qubo.NetworkType`. The sections below document the implementation modules.
+
+## Core modules
 
 ::: sparse_qubo.core.constraint
     options:
       show_root_heading: true
       show_source: true
 
-::: sparse_qubo.core.base_network
+::: sparse_qubo.core.network
     options:
       show_root_heading: true
       show_source: true
@@ -19,12 +21,12 @@ This page provides the complete API reference for `sparse-qubo`. Use the navigat
       show_root_heading: true
       show_source: true
 
-::: sparse_qubo.core.permutation_channel
+::: sparse_qubo.core.switch
     options:
       show_root_heading: true
       show_source: true
 
-## Network Implementations
+## Network implementations
 
 ::: sparse_qubo.networks.benes_network
     options:
@@ -71,9 +73,20 @@ This page provides the complete API reference for `sparse-qubo`. Use the navigat
       show_root_heading: true
       show_source: true
 
-## D-Wave Integration
+## D-Wave integration
+
+Public entry point: `sparse_qubo.create_constraint_dwave`. Implementation module:
 
 ::: sparse_qubo.dwave.constraint
+    options:
+      show_root_heading: true
+      show_source: true
+
+## Fixstars Amplify integration
+
+Public entry point: `sparse_qubo.create_constraint_amplify`. Implementation module:
+
+::: sparse_qubo.fixstars_amplify.constraint
     options:
       show_root_heading: true
       show_source: true

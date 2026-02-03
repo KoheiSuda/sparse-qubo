@@ -1,3 +1,9 @@
+"""D-Wave/dimod integration: build dimod BQMs from constraint types and network types.
+
+Use create_constraint_dwave (from sparse_qubo) or constraint() from this module
+to obtain a BinaryQuadraticModel for use with D-Wave samplers or dimod.
+"""
+
 import dimod
 import dimod.variables
 
@@ -11,6 +17,7 @@ def naive_constraint(
     c1: int | None = None,
     c2: int | None = None,
 ) -> dimod.BinaryQuadraticModel:
+    """Encode the constraint as a single linear equality/inequality (no switching network)."""
     size = len(variables)
     terms = [(str(v), 1) for v in variables]
     bqm = dimod.BinaryQuadraticModel(dimod.BINARY)
@@ -48,6 +55,7 @@ def constraint(
     c2: int | None = None,
     threshold: int | None = None,
 ) -> dimod.BinaryQuadraticModel:
+    """Build a dimod BQM for the given constraint using the specified network type (or NAIVE)."""
     if network_type == NetworkType.NAIVE:
         bqm = naive_constraint(variables, constraint_type, c1, c2)
         return bqm

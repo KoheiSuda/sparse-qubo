@@ -1,3 +1,9 @@
+"""Constraint types and QUBO construction for equality/inequality constraints.
+
+This module provides ConstraintType, get_initial_nodes, and get_constraint_qubo
+to build QUBOs from switching networks for use with D-Wave or Amplify.
+"""
+
 from enum import StrEnum
 
 from sparse_qubo.core.network import NetworkType
@@ -34,11 +40,13 @@ def reset_constraint_prefix_counter() -> None:
 
 
 class ConstraintType(StrEnum):
-    ONE_HOT = "one_hot"
-    EQUAL_TO = "equal_to"
-    LESS_EQUAL = "less_equal"
-    GREATER_EQUAL = "greater_equal"
-    CLAMP = "clamp"
+    """Type of linear constraint on binary variables (sum of variables)."""
+
+    ONE_HOT = "one_hot"  # Exactly one variable is 1
+    EQUAL_TO = "equal_to"  # Sum equals c1
+    LESS_EQUAL = "less_equal"  # Sum <= c1
+    GREATER_EQUAL = "greater_equal"  # Sum >= c1
+    CLAMP = "clamp"  # c1 <= sum <= c2
 
 
 def get_initial_nodes(
@@ -48,6 +56,11 @@ def get_initial_nodes(
     c2: int | None = None,
     exponentiation: bool = False,
 ) -> tuple[list[VariableNode], list[VariableNode]]:
+    """Build left and right VariableNode lists for a switching network from variable names and constraint type.
+
+    Used by get_constraint_qubo and by network implementations. If exponentiation is True,
+    the right side is padded to a power-of-2 size (for Benes, Bitonic, OddEvenMergeSort).
+    """
     original_size = len(variables)
     target_size = original_size
     if exponentiation and original_size > 0:
