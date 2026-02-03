@@ -1,21 +1,19 @@
 from typing import ClassVar
 
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class AdhocNetworkWithMinimumDegree:
     @classmethod
-    def implement_if_small(
-        cls, left_nodes: list[str], right_nodes: list[str], max_degree: int
-    ) -> list[PermutationChannel]:
+    def implement_if_small(cls, left_nodes: list[str], right_nodes: list[str], max_degree: int) -> list[Switch]:
         N = max(len(left_nodes), len(right_nodes))
         if N < 2:
             raise ValueError("N must be greater than or equal to 2")
         if max_degree >= N:
             return [
-                PermutationChannel(
+                Switch(
                     left_nodes=frozenset(left_nodes),
                     right_nodes=frozenset(right_nodes),
                 )
@@ -34,15 +32,15 @@ class AdhocNetworkWithMinimumDegree:
         #         for i in range(math.floor(max_degree / 2), max_degree)
         #     ]
         #     return [
-        #         PermutationChannel(
+        #         Switch(
         #             left_nodes=frozenset(left_nodes[:max_degree]),
         #             right_nodes=frozenset(first_vars + second_left_vars),
         #         ),
-        #         PermutationChannel(
+        #         Switch(
         #             left_nodes=frozenset(second_left_vars + left_nodes[max_degree:]),
         #             right_nodes=frozenset(second_right_vars + right_nodes[max_degree:]),
         #         ),
-        #         PermutationChannel(
+        #         Switch(
         #             left_nodes=frozenset(first_vars + second_right_vars),
         #             right_nodes=frozenset(right_nodes[:max_degree]),
         #         ),
@@ -78,13 +76,13 @@ class ClosNetworkWithMaxDegree(ClosNetworkBase):
             if adhoc_network := cls._implement_if_small([f"L{i}" for i in range(N)], [f"R{i}" for i in range(N)]):
                 cls.num_elements_dict[N] = len(adhoc_network)
             else:
-                n_opt, r_opt = cls._determine_channel_sizes(N, N)
+                n_opt, r_opt = cls._determine_switch_sizes(N, N)
                 cls.num_elements_dict[N] = cls._calc_num_elements(N, n_opt, r_opt)
         return cls.num_elements_dict[N]
 
     # Return optimal (n, r)
     @classmethod
-    def _determine_channel_sizes(cls, N_left: int, N_right: int) -> tuple[int, int]:
+    def _determine_switch_sizes(cls, N_left: int, N_right: int) -> tuple[int, int]:
         if cls.max_degree is None:
             raise RuntimeError("max_degree is None")
 
@@ -96,7 +94,7 @@ class ClosNetworkWithMaxDegree(ClosNetworkBase):
 
     # Return implementation for small cases
     @classmethod
-    def _implement_if_small(cls, left_nodes: list[str], right_nodes: list[str]) -> list[PermutationChannel] | None:
+    def _implement_if_small(cls, left_nodes: list[str], right_nodes: list[str]) -> list[Switch] | None:
         if cls.max_degree is None:
             raise RuntimeError("max_degree is None")
 

@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 import dimod
 import dimod.variables
 import pytest
@@ -63,6 +65,14 @@ class TestNaiveConstraint:
             naive_constraint(variables, ConstraintType.CLAMP, c1=2, c2=1)
 
 
+class _ConstraintTestKwargs(TypedDict, total=False):
+    """Keyword args passed to constraint() in tests (c1, c2, threshold only)."""
+
+    c1: int
+    c2: int
+    threshold: int
+
+
 class TestConstraint:
     """Tests for constraint function."""
 
@@ -78,7 +88,7 @@ class TestConstraint:
         ],
     )
     def test_constraint(
-        self, network_type: NetworkType, constraint_type: ConstraintType, kwargs: dict[str, int]
+        self, network_type: NetworkType, constraint_type: ConstraintType, kwargs: _ConstraintTestKwargs
     ) -> None:
         """Test all combinations of NetworkType and ConstraintType."""
         variables = dimod.variables.Variables([f"x{i}" for i in range(8)])

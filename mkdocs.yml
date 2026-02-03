@@ -12,6 +12,8 @@ nav:
   - Getting Started: getting-started.md
   - Examples: examples.md
   - API Reference: modules.md
+  - Usage: usage.md
+  - Modules: modules.md
 plugins:
   - search
   - mkdocstrings:

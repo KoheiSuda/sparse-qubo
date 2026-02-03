@@ -34,8 +34,8 @@ class TestBitonicSortNetwork:
             for i in range(2)
         ]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bitonic_sort_size_4(self) -> None:
         """Test BitonicSortNetwork with size 4."""
@@ -48,8 +48,8 @@ class TestBitonicSortNetwork:
             for i in range(4)
         ]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bitonic_sort_size_8(self) -> None:
         """Test BitonicSortNetwork with size 8."""
@@ -62,8 +62,8 @@ class TestBitonicSortNetwork:
             for i in range(8)
         ]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bitonic_sort_size_16(self) -> None:
         """Test BitonicSortNetwork with size 16."""
@@ -76,24 +76,24 @@ class TestBitonicSortNetwork:
             for i in range(16)
         ]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bitonic_sort_all_zero(self) -> None:
         """Test BitonicSortNetwork with all zeros."""
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(4)]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) >= 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) >= 0
 
     def test_bitonic_sort_all_one(self) -> None:
         """Test BitonicSortNetwork with all ones."""
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(4)]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) >= 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) >= 0
 
     def test_bitonic_sort_reverse(self) -> None:
         """Test BitonicSortNetwork with reverse parameter."""
@@ -106,12 +106,12 @@ class TestBitonicSortNetwork:
             for i in range(4)
         ]
 
-        channels_normal = BitonicSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
-        channels_reversed = BitonicSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
+        switches_normal = BitonicSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
+        switches_reversed = BitonicSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
 
         # Both should produce valid networks
-        assert len(channels_normal) > 0
-        assert len(channels_reversed) > 0
+        assert len(switches_normal) > 0
+        assert len(switches_reversed) > 0
 
     def test_bitonic_sort_with_threshold(self) -> None:
         """Test BitonicSortNetwork with threshold parameter."""
@@ -124,5 +124,5 @@ class TestBitonicSortNetwork:
             for i in range(8)
         ]
 
-        channels = BitonicSortNetwork.generate_network(left_nodes, right_nodes, threshold=4)
-        assert len(channels) > 0
+        switches = BitonicSortNetwork.generate_network(left_nodes, right_nodes, threshold=4)
+        assert len(switches) > 0

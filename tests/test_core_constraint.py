@@ -187,3 +187,13 @@ class TestGetConstraintQUBO:
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
+
+    def test_variable_prefix_avoids_collision(self) -> None:
+        """Internally assigned prefixes keep auxiliary variable names disjoint across calls."""
+        from sparse_qubo.core.constraint import reset_constraint_prefix_counter
+
+        reset_constraint_prefix_counter()
+        qubo1 = get_constraint_qubo(["a", "b", "c"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        qubo2 = get_constraint_qubo(["x", "y", "z"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        # User variables differ; internal prefix makes auxiliary names disjoint
+        assert qubo1.variables.isdisjoint(qubo2.variables), "auxiliary variables should not collide"

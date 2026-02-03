@@ -1,6 +1,6 @@
 from sparse_qubo.core.base_network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 
 
 # Generate a network that connects left and right in an all-to-all manner
@@ -12,11 +12,11 @@ class CliqueNetwork(ISwitchingNetwork):
         right_nodes: list[VariableNode],
         threshold: int | None = None,
         reverse: bool = False,
-    ) -> list[PermutationChannel]:
+    ) -> list[Switch]:
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         return [
-            PermutationChannel(
+            Switch(
                 left_nodes=frozenset(left_names),
                 right_nodes=frozenset(right_names),
             )
