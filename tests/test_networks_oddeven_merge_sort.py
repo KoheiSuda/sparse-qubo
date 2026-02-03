@@ -34,8 +34,8 @@ class TestOddEvenMergeSortNetwork:
             for i in range(2)
         ]
 
-        channels = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_oddeven_merge_sort_size_4(self) -> None:
         """Test OddEvenMergeSortNetwork with size 4."""
@@ -48,8 +48,8 @@ class TestOddEvenMergeSortNetwork:
             for i in range(4)
         ]
 
-        channels = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_oddeven_merge_sort_size_8(self) -> None:
         """Test OddEvenMergeSortNetwork with size 8."""
@@ -62,8 +62,8 @@ class TestOddEvenMergeSortNetwork:
             for i in range(8)
         ]
 
-        channels = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_oddeven_merge_sort_reverse(self) -> None:
         """Test OddEvenMergeSortNetwork with reverse parameter."""
@@ -76,9 +76,9 @@ class TestOddEvenMergeSortNetwork:
             for i in range(4)
         ]
 
-        channels_normal = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
-        channels_reversed = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
+        switches_normal = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
+        switches_reversed = OddEvenMergeSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
 
         # Both should produce valid networks
-        assert len(channels_normal) > 0
-        assert len(channels_reversed) > 0
+        assert len(switches_normal) > 0
+        assert len(switches_reversed) > 0

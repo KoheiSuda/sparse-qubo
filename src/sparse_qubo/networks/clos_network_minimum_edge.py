@@ -1,7 +1,7 @@
 from typing import ClassVar
 
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
@@ -25,7 +25,7 @@ class ClosNetworkMinimumEdge(ClosNetworkBase):
     @classmethod
     def _get_estimated_cost_and_implementation(cls, N: int) -> tuple[int, bool]:
         if N not in cls.num_logical_edges_dict:
-            n_opt, r_opt = cls._determine_channel_sizes(N, N)
+            n_opt, r_opt = cls._determine_switch_sizes(N, N)
             cost_division = cls._calc_num_logical_edges(N, n_opt, r_opt)
             cost_clique = N * (N * 2 - 1)
             cls.is_small_dict[N] = cost_clique <= cost_division
@@ -34,7 +34,7 @@ class ClosNetworkMinimumEdge(ClosNetworkBase):
 
     # Return optimal (n, r)
     @classmethod
-    def _determine_channel_sizes(cls, N_left: int, N_right: int) -> tuple[int, int]:
+    def _determine_switch_sizes(cls, N_left: int, N_right: int) -> tuple[int, int]:
         N = max(N_left, N_right)
 
         # r = (N + n - 1) // n is the minimum r that satisfies n*r >= N
@@ -44,12 +44,12 @@ class ClosNetworkMinimumEdge(ClosNetworkBase):
 
     # Return implementation for small cases
     @classmethod
-    def _implement_if_small(cls, left_nodes: list[str], right_nodes: list[str]) -> list[PermutationChannel] | None:
+    def _implement_if_small(cls, left_nodes: list[str], right_nodes: list[str]) -> list[Switch] | None:
         N = max(len(left_nodes), len(right_nodes))
         is_small = cls._get_estimated_cost_and_implementation(N)[1]
         if is_small:
             return [
-                PermutationChannel(
+                Switch(
                     left_nodes=frozenset(left_nodes),
                     right_nodes=frozenset(right_nodes),
                 )

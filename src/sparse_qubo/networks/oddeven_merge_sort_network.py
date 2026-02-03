@@ -2,7 +2,7 @@ from math import log2
 
 from sparse_qubo.core.base_network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 
 
 # TODO: The way reverse is handled is not clean
@@ -15,7 +15,7 @@ class OddEvenMergeSortNetwork(ISwitchingNetwork):
         right_nodes: list[VariableNode],
         threshold: int | None = None,
         reverse: bool = True,
-    ) -> list[PermutationChannel]:
+    ) -> list[Switch]:
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         if len(left_names) != len(right_names):
@@ -29,7 +29,7 @@ class OddEvenMergeSortNetwork(ISwitchingNetwork):
             left_names, right_names = right_names, left_names
 
         progress: list[int] = [0] * N
-        temp_result_channels: list[PermutationChannel] = []
+        temp_result_switches: list[Switch] = []
         # m is called in the order (0, 1, 2, 3), (0, 1, 2), (0, 1), (0)
         for m_max in range(1, n + 1)[::-1]:
             M_max: int = 2**m_max
@@ -40,8 +40,8 @@ class OddEvenMergeSortNetwork(ISwitchingNetwork):
                     i_end: int = i_base + M_max - M
                     for i in range(i_start, i_end):
                         if (i - i_start) // M % 2 == 1:
-                            temp_result_channels.append(
-                                PermutationChannel(
+                            temp_result_switches.append(
+                                Switch(
                                     left_nodes=frozenset([
                                         f"{i}_{progress[i]}",
                                         f"{i + M}_{progress[i + M]}",
@@ -65,19 +65,19 @@ class OddEvenMergeSortNetwork(ISwitchingNetwork):
                     temp_name_to_result_name[f"{i}_{j}"] = f"{left_names[i]}_{j - 1}_{right_names[i]}"
         if reverse:
             return [
-                PermutationChannel(
-                    left_nodes=frozenset([temp_name_to_result_name[left_node] for left_node in channel.left_nodes]),
-                    right_nodes=frozenset([temp_name_to_result_name[right_node] for right_node in channel.right_nodes]),
+                Switch(
+                    left_nodes=frozenset([temp_name_to_result_name[left_node] for left_node in switch.left_nodes]),
+                    right_nodes=frozenset([temp_name_to_result_name[right_node] for right_node in switch.right_nodes]),
                 )
-                for channel in temp_result_channels
+                for switch in temp_result_switches
             ]
         else:
             res = [
-                PermutationChannel(
-                    left_nodes=frozenset([temp_name_to_result_name[left_node] for left_node in channel.right_nodes]),
-                    right_nodes=frozenset([temp_name_to_result_name[right_node] for right_node in channel.left_nodes]),
+                Switch(
+                    left_nodes=frozenset([temp_name_to_result_name[left_node] for left_node in switch.right_nodes]),
+                    right_nodes=frozenset([temp_name_to_result_name[right_node] for right_node in switch.left_nodes]),
                 )
-                for channel in temp_result_channels
+                for switch in temp_result_switches
             ]
             return res[::-1]
 

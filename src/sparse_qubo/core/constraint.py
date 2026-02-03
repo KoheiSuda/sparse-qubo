@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import QUBO, PermutationChannel
+from sparse_qubo.core.switch import QUBO, Switch
 from sparse_qubo.networks.benes_network import BenesNetwork
 from sparse_qubo.networks.bitonic_sort_network import BitonicSortNetwork
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
@@ -142,37 +142,37 @@ def get_constraint_qubo(
     match network_type:
         case NetworkType.BENES:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2, exponentiation=True)
-            channels = BenesNetwork.generate_network(left_nodes, right_nodes, threshold=threshold, reverse=reverse)
+            switches = BenesNetwork.generate_network(left_nodes, right_nodes, threshold=threshold, reverse=reverse)
         case NetworkType.BITONIC_SORT:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2, exponentiation=True)
-            channels = BitonicSortNetwork.generate_network(
+            switches = BitonicSortNetwork.generate_network(
                 left_nodes, right_nodes, threshold=threshold, reverse=reverse
             )
         case NetworkType.BUBBLE_SORT:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2)
-            channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes, threshold=threshold, reverse=reverse)
+            switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes, threshold=threshold, reverse=reverse)
         case NetworkType.CLOS_NETWORK_MAX_DEGREE:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2)
-            channels = ClosNetworkWithMaxDegree.generate_network(
+            switches = ClosNetworkWithMaxDegree.generate_network(
                 left_nodes, right_nodes, threshold=threshold, reverse=reverse
             )
         case NetworkType.CLOS_NETWORK_MIN_EDGE:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2)
-            channels = ClosNetworkMinimumEdge.generate_network(
+            switches = ClosNetworkMinimumEdge.generate_network(
                 left_nodes, right_nodes, threshold=threshold, reverse=reverse
             )
         case NetworkType.DIVIDE_AND_CONQUER:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2)
-            channels = DivideAndConquerNetwork.generate_network(
+            switches = DivideAndConquerNetwork.generate_network(
                 left_nodes, right_nodes, threshold=threshold, reverse=reverse
             )
         case NetworkType.ODDEVEN_MERGE_SORT:
             left_nodes, right_nodes = get_initial_nodes(variables, constraint_type, c1, c2, exponentiation=True)
-            channels = OddEvenMergeSortNetwork.generate_network(
+            switches = OddEvenMergeSortNetwork.generate_network(
                 left_nodes, right_nodes, threshold=threshold, reverse=reverse
             )
         case _:
             raise NotImplementedError
-    qubo = PermutationChannel.to_qubo(channels)
+    qubo = Switch.to_qubo(switches)
     qubo = _prefix_auxiliary_variables(qubo, set(variables), var_prefix)
     return qubo

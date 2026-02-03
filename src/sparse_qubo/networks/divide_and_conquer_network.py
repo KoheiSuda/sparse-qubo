@@ -3,7 +3,7 @@ from math import ceil
 
 from sparse_qubo.core.base_network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
 
 
@@ -16,7 +16,7 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
         right_nodes: list[VariableNode],
         threshold: int | None = None,
         reverse: bool = False,
-    ) -> list[PermutationChannel]:
+    ) -> list[Switch]:
         if len(left_nodes) != len(right_nodes):
             raise ValueError("left_nodes and right_nodes must have the same length")
 
@@ -36,56 +36,56 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
         if not all(node.attribute == NodeAttribute.ZERO_OR_ONE for node in left_nodes):
             raise ValueError("All left_nodes must have ZERO_OR_ONE attribute")
 
-        perm_channels: list[PermutationChannel] = []
+        switches: list[Switch] = []
 
         if (
             len(node_dict[NodeAttribute.ALWAYS_ZERO]) == num_variables
             or len(node_dict[NodeAttribute.ALWAYS_ONE]) == num_variables
         ):
-            perm_channels.extend([
-                PermutationChannel(
+            switches.extend([
+                Switch(
                     left_nodes=frozenset([left_node.name]),
                     right_nodes=frozenset([right_node.name]),
                 )
                 for left_node, right_node in zip(left_nodes, right_nodes, strict=True)
             ])
-            return perm_channels
+            return switches
 
         # Case of one-hot
         if len(node_dict[NodeAttribute.ALWAYS_ONE]) == 1:
-            perm_channels.extend(
+            switches.extend(
                 BubbleSortNetwork._generate_original_network(
                     left_nodes,
                     node_dict[NodeAttribute.ALWAYS_ZERO] + node_dict[NodeAttribute.ALWAYS_ONE],
                 )
             )
-            return perm_channels
+            return switches
         elif len(node_dict[NodeAttribute.ALWAYS_ZERO]) == 1:
-            perm_channels.extend(
+            switches.extend(
                 BubbleSortNetwork._generate_original_network(
                     left_nodes,
                     node_dict[NodeAttribute.ALWAYS_ONE] + node_dict[NodeAttribute.ALWAYS_ZERO],
                 )
             )
-            return perm_channels
+            return switches
         # Other cases
         else:
             if threshold is not None and num_variables <= threshold:
-                perm_channels.append(
-                    PermutationChannel(
+                switches.append(
+                    Switch(
                         left_nodes=frozenset([left_node.name for left_node in left_nodes]),
                         right_nodes=frozenset([right_node.name for right_node in right_nodes]),
                     )
                 )
-                return perm_channels
+                return switches
 
             aux_nodes: list[VariableNode] = [
                 VariableNode(name=f"{left_node.name}_{idx}", attribute=NodeAttribute.ZERO_OR_ONE)
                 for idx, left_node in enumerate(left_nodes)
             ]
             for i in range(num_variables // 2):
-                perm_channels.append(
-                    PermutationChannel(
+                switches.append(
+                    Switch(
                         left_nodes=frozenset([
                             left_nodes[i].name,
                             left_nodes[i + ceil(num_variables / 2)].name,
@@ -102,7 +102,7 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
             if num_variables % 2 == 1:
                 aux_nodes[num_variables // 2] = left_nodes[num_variables // 2]
 
-            perm_channels.extend(
+            switches.extend(
                 cls._generate_original_network(
                     left_nodes=aux_nodes[: ceil(num_variables / 2)],
                     right_nodes=node_dict[NodeAttribute.ALWAYS_ONE][
@@ -114,7 +114,7 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
                     threshold=threshold,
                 )
             )
-            perm_channels.extend(
+            switches.extend(
                 cls._generate_original_network(
                     left_nodes=aux_nodes[ceil(num_variables / 2) :],
                     right_nodes=node_dict[NodeAttribute.ALWAYS_ONE][
@@ -126,4 +126,4 @@ class DivideAndConquerNetwork(ISwitchingNetwork):
                     threshold=threshold,
                 )
             )
-            return perm_channels
+            return switches

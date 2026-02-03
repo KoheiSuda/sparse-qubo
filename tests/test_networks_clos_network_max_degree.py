@@ -19,8 +19,8 @@ class TestClosNetworkWithMaxDegree:
             for i in range(7)
         ]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_clos_network_max_degree_size_4(self) -> None:
         """Test ClosNetworkWithMaxDegree with size 4."""
@@ -34,8 +34,8 @@ class TestClosNetworkWithMaxDegree:
             for i in range(4)
         ]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_clos_network_max_degree_size_8(self) -> None:
         """Test ClosNetworkWithMaxDegree with size 8."""
@@ -49,8 +49,8 @@ class TestClosNetworkWithMaxDegree:
             for i in range(8)
         ]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_clos_network_max_degree_all_zero(self) -> None:
         """Test ClosNetworkWithMaxDegree with all zeros."""
@@ -58,8 +58,8 @@ class TestClosNetworkWithMaxDegree:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(4)]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) >= 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) >= 0
 
     def test_clos_network_max_degree_all_one(self) -> None:
         """Test ClosNetworkWithMaxDegree with all ones."""
@@ -67,8 +67,8 @@ class TestClosNetworkWithMaxDegree:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(4)]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) >= 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) >= 0
 
     def test_clos_network_max_degree_different_sizes(self) -> None:
         """Test ClosNetworkWithMaxDegree with different left and right sizes."""
@@ -76,8 +76,8 @@ class TestClosNetworkWithMaxDegree:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}") for i in range(6)]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_clos_network_max_degree_reverse(self) -> None:
         """Test ClosNetworkWithMaxDegree with reverse parameter."""
@@ -91,12 +91,12 @@ class TestClosNetworkWithMaxDegree:
             for i in range(4)
         ]
 
-        channels_normal = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, reverse=False)
-        channels_reversed = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, reverse=True)
+        switches_normal = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, reverse=False)
+        switches_reversed = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, reverse=True)
 
         # Both should produce valid networks
-        assert len(channels_normal) > 0
-        assert len(channels_reversed) > 0
+        assert len(switches_normal) > 0
+        assert len(switches_reversed) > 0
 
     def test_clos_network_max_degree_with_threshold(self) -> None:
         """Test ClosNetworkWithMaxDegree with threshold parameter."""
@@ -110,8 +110,8 @@ class TestClosNetworkWithMaxDegree:
             for i in range(8)
         ]
 
-        channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, threshold=4)
-        assert len(channels) > 0
+        switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes, threshold=4)
+        assert len(switches) > 0
 
     def test_reset_max_degree(self) -> None:
         """Test reset_max_degree method."""
@@ -142,5 +142,5 @@ class TestClosNetworkWithMaxDegree:
                 for i in range(7)
             ]
 
-            channels = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
-            assert len(channels) > 0
+            switches = ClosNetworkWithMaxDegree.generate_network(left_nodes, right_nodes)
+            assert len(switches) > 0

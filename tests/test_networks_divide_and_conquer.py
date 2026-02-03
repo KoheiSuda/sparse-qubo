@@ -21,9 +21,9 @@ class TestDivideAndConquerNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(size)]
 
-        channels = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
+        switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
         # Should have direct connections
-        assert len(channels) == size
+        assert len(switches) == size
 
     def test_divide_and_conquer_all_one(self) -> None:
         """Test DivideAndConquerNetwork with all ones."""
@@ -31,9 +31,9 @@ class TestDivideAndConquerNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(size)]
 
-        channels = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
+        switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
         # Should have direct connections
-        assert len(channels) == size
+        assert len(switches) == size
 
     def test_divide_and_conquer_one_hot(self) -> None:
         """Test DivideAndConquerNetwork with one-hot constraint."""
@@ -47,8 +47,8 @@ class TestDivideAndConquerNetwork:
             for i in range(size)
         ]
 
-        channels = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_divide_and_conquer_with_threshold(self) -> None:
         """Test DivideAndConquerNetwork with threshold parameter."""
@@ -62,12 +62,12 @@ class TestDivideAndConquerNetwork:
             for i in range(size)
         ]
 
-        channels_with_threshold = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes, threshold=4)
-        channels_without_threshold = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
+        switches_with_threshold = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes, threshold=4)
+        switches_without_threshold = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
 
         # Both should produce valid networks
-        assert len(channels_with_threshold) > 0
-        assert len(channels_without_threshold) > 0
+        assert len(switches_with_threshold) > 0
+        assert len(switches_without_threshold) > 0
 
     def test_divide_and_conquer_invalid_left_nodes(self) -> None:
         """Test DivideAndConquerNetwork raises error for invalid left nodes."""
