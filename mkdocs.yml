@@ -9,6 +9,7 @@ copyright: Maintained by <a href="https://KoheiSuda.com">KoheiSuda</a>.
 
 nav:
   - Home: index.md
+  - Usage: usage.md
   - Modules: modules.md
 plugins:
   - search

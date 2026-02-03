@@ -27,10 +27,10 @@ class TestBubbleSortNetwork:
             for i in range(size)
         ]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
 
         # Check the structure of the network
-        c0, c1, c2 = channels[0], channels[1], channels[2]
+        c0, c1, c2 = switches[0], switches[1], switches[2]
         # c2 (L0, L1) -> c1
         # c2's output nodes are included in c1's input nodes
         assert c2.right_nodes.issubset(c1.left_nodes)
@@ -45,8 +45,8 @@ class TestBubbleSortNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(size)]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bubble_sort_network_all_one(self) -> None:
         """Test BubbleSortNetwork with all ones."""
@@ -54,8 +54,8 @@ class TestBubbleSortNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(size)]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(channels) > 0
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        assert len(switches) > 0
 
     def test_bubble_sort_network_reverse(self) -> None:
         """Test BubbleSortNetwork with reverse parameter."""
@@ -69,8 +69,8 @@ class TestBubbleSortNetwork:
             for i in range(size)
         ]
 
-        channels_normal = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
-        channels_reversed = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
+        switches_normal = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
+        switches_reversed = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
 
-        # Reversed should have same number of channels
-        assert len(channels_normal) == len(channels_reversed)
+        # Reversed should have same number of switches
+        assert len(switches_normal) == len(switches_reversed)

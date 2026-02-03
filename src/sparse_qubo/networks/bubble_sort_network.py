@@ -1,6 +1,6 @@
 from sparse_qubo.core.base_network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.permutation_channel import PermutationChannel
+from sparse_qubo.core.switch import Switch
 
 
 # Generate a network representing bubble sort
@@ -12,7 +12,7 @@ class BubbleSortNetwork(ISwitchingNetwork):
         right_nodes: list[VariableNode],
         threshold: int | None = None,
         reverse: bool = False,
-    ) -> list[PermutationChannel]:
+    ) -> list[Switch]:
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         if len(left_names) != len(right_names):
@@ -27,12 +27,12 @@ class BubbleSortNetwork(ISwitchingNetwork):
             all_nodes[i].append(right_names[i])
 
         progress: list[int] = [0] * N
-        result_channels: list[PermutationChannel] = []
+        result_switches: list[Switch] = []
         for i in list(range(1, N)) + list(range(1, N - 1)[::-1]):
             for j in range(0, i, 2):
                 k1, k2 = i - j, i - j - 1
-                result_channels.append(
-                    PermutationChannel(
+                result_switches.append(
+                    Switch(
                         left_nodes=frozenset([all_nodes[k1][progress[k1]], all_nodes[k2][progress[k2]]]),
                         right_nodes=frozenset([
                             all_nodes[k1][progress[k1] + 1],
@@ -42,7 +42,7 @@ class BubbleSortNetwork(ISwitchingNetwork):
                 )
                 progress[k1] += 1
                 progress[k2] += 1
-        return result_channels
+        return result_switches
 
 
 if __name__ == "__main__":

@@ -30,21 +30,21 @@ class TestISwitchingNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(4)]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
 
-        # All channels should be removed or simplified since all right nodes are ALWAYS_ONE
+        # All switches should be removed or simplified since all right nodes are ALWAYS_ONE
         # The network should be optimized
-        assert isinstance(channels, list)
+        assert isinstance(switches, list)
 
     def test_generate_network_fixes_always_zero(self) -> None:
         """Test that generate_network fixes nodes that must be ALWAYS_ZERO."""
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(4)]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
 
-        # All channels should be removed or simplified since all right nodes are ALWAYS_ZERO
-        assert isinstance(channels, list)
+        # All switches should be removed or simplified since all right nodes are ALWAYS_ZERO
+        assert isinstance(switches, list)
 
     def test_generate_network_one_hot(self) -> None:
         """Test generate_network with one-hot constraint."""
@@ -58,10 +58,10 @@ class TestISwitchingNetwork:
             for i in range(size)
         ]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
 
         # Check the structure of the network
-        c0, c1, c2 = channels[0], channels[1], channels[2]
+        c0, c1, c2 = switches[0], switches[1], switches[2]
         # c2 (L0, L1) -> c1
         # c2's output nodes are included in c1's input nodes
         assert c2.right_nodes.issubset(c1.left_nodes)
@@ -75,18 +75,18 @@ class TestISwitchingNetwork:
         left_nodes = [VariableNode(name=f"L{i}") for i in range(4)]
         right_nodes = [VariableNode(name=f"R{i}") for i in range(4)]
 
-        channels_original = BubbleSortNetwork._generate_original_network(left_nodes, right_nodes)
+        switches_original = BubbleSortNetwork._generate_original_network(left_nodes, right_nodes)
 
-        # Manually create an invalid channel structure
-        invalid_channels = [
-            channels_original[0],
-            type(channels_original[0])(
+        # Manually create an invalid switch structure
+        invalid_switches = [
+            switches_original[0],
+            type(switches_original[0])(
                 left_nodes=frozenset(["L_new"]),
                 right_nodes=frozenset(["R_new"]),
             ),
         ]
         with (
-            patch.object(BubbleSortNetwork, "_generate_original_network", return_value=invalid_channels),
+            patch.object(BubbleSortNetwork, "_generate_original_network", return_value=invalid_switches),
             pytest.raises(ValueError, match="Invalid network"),
         ):
             BubbleSortNetwork.generate_network(left_nodes, right_nodes)
@@ -102,12 +102,12 @@ class TestISwitchingNetwork:
             for i in range(4)
         ]
 
-        channels_normal = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
-        channels_reversed = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
+        switches_normal = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=False)
+        switches_reversed = BubbleSortNetwork.generate_network(left_nodes, right_nodes, reverse=True)
 
         # Both should produce valid networks
-        assert isinstance(channels_normal, list)
-        assert isinstance(channels_reversed, list)
+        assert isinstance(switches_normal, list)
+        assert isinstance(switches_reversed, list)
 
     def test_generate_network_with_constants(self) -> None:
         """Test generate_network handles constants correctly."""
@@ -120,10 +120,10 @@ class TestISwitchingNetwork:
             for i in range(3)
         ]
 
-        channels = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
+        switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
 
         # Check that constants are properly handled
-        for channel in channels:
+        for switch in switches:
             # Constants should be non-negative integers
-            assert channel.left_constant >= 0
-            assert channel.right_constant >= 0
+            assert switch.left_constant >= 0
+            assert switch.right_constant >= 0
