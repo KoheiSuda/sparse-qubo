@@ -1793,6 +1793,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pandas-stubs"
+version = "2.3.3.260113"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "types-pytz" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/92/5d/be23854a73fda69f1dbdda7bc10fbd6f930bd1fa87aaec389f00c901c1e8/pandas_stubs-2.3.3.260113.tar.gz", hash = "sha256:076e3724bcaa73de78932b012ec64b3010463d377fa63116f4e6850643d93800", size = 116131, upload-time = "2026-01-13T22:30:16.704Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/c6/df1fe324248424f77b89371116dab5243db7f052c32cc9fe7442ad9c5f75/pandas_stubs-2.3.3.260113-py3-none-any.whl", hash = "sha256:ec070b5c576e1badf12544ae50385872f0631fc35d99d00dc598c2954ec564d3", size = 168246, upload-time = "2026-01-13T22:30:15.244Z" },
+]
+
+[[package]]
 name = "parso"
 version = "0.8.5"
 source = { registry = "https://pypi.org/simple" }
@@ -2449,6 +2462,7 @@ dev = [
     { name = "mkdocstrings", extra = ["python"] },
     { name = "mypy" },
     { name = "pandas" },
+    { name = "pandas-stubs" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -2477,6 +2491,7 @@ dev = [
     { name = "mkdocstrings", extras = ["python"], specifier = ">=1.0.0" },
     { name = "mypy", specifier = ">=1.19.0" },
     { name = "pandas", specifier = ">=3.0.0" },
+    { name = "pandas-stubs", specifier = ">=2.3.3.260113" },
     { name = "pre-commit", specifier = ">=4.5.0" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
@@ -2571,6 +2586,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/07/e3/dcc20d645dc0631b0df263959b8dde49dc47ad3c0537d8958bfefe692380/types_networkx-3.6.1.20251220.tar.gz", hash = "sha256:caf95e0d7777b969e50ceeb2c430d9d4dfe6b7bdee43c42dc9879a2d4408a790", size = 73500, upload-time = "2025-12-20T03:07:47.933Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/65/e7/fe40cfe7ba384d1f46fee835eb7727a4ee2fd80021a69add9553197b69a1/types_networkx-3.6.1.20251220-py3-none-any.whl", hash = "sha256:417ccbe7841f335a4c2b8e7515c3bc97a00fb5f686f399a763ef64392b209eac", size = 162715, upload-time = "2025-12-20T03:07:46.882Z" },
+]
+
+[[package]]
+name = "types-pytz"
+version = "2025.2.0.20251108"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/ff/c047ddc68c803b46470a357454ef76f4acd8c1088f5cc4891cdd909bfcf6/types_pytz-2025.2.0.20251108.tar.gz", hash = "sha256:fca87917836ae843f07129567b74c1929f1870610681b4c92cb86a3df5817bdb", size = 10961, upload-time = "2025-11-08T02:55:57.001Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e7/c1/56ef16bf5dcd255155cc736d276efa6ae0a5c26fd685e28f0412a4013c01/types_pytz-2025.2.0.20251108-py3-none-any.whl", hash = "sha256:0f1c9792cab4eb0e46c52f8845c8f77cf1e313cb3d68bf826aa867fe4717d91c", size = 10116, upload-time = "2025-11-08T02:55:56.194Z" },
 ]
 
 [[package]]
