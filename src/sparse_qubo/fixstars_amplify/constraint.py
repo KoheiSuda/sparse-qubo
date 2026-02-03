@@ -1,7 +1,7 @@
 import amplify
 
-from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
+from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.switch import QUBO
 
 

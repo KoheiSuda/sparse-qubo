@@ -4,8 +4,8 @@ import dimod
 import dimod.variables
 import pytest
 
-from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.constraint import ConstraintType
+from sparse_qubo.core.network import NetworkType
 from sparse_qubo.dwave.constraint import constraint, naive_constraint
 
 

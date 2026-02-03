@@ -1,7 +1,7 @@
 from collections import defaultdict
 from math import ceil
 
-from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork

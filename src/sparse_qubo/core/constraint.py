@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from sparse_qubo.core.base_network import NetworkType
+from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import QUBO, Switch
 from sparse_qubo.networks.benes_network import BenesNetwork

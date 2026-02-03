@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from sparse_qubo.core.base_network import NetworkType
+from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
 

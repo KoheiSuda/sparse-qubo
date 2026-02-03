@@ -1,6 +1,6 @@
 from math import log2
 
-from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import Switch
 
