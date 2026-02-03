@@ -1,3 +1,5 @@
+"""Implementation of Clos network with maximum degree constraint: limits the size of each switch."""
+
 from typing import ClassVar
 
 from sparse_qubo.core.node import NodeAttribute, VariableNode
@@ -6,6 +8,8 @@ from sparse_qubo.networks.clos_network_base import ClosNetworkBase
 
 
 class AdhocNetworkWithMinimumDegree:
+    """Helper for small networks when max degree is large enough (single switch)."""
+
     @classmethod
     def implement_if_small(cls, left_nodes: list[str], right_nodes: list[str], max_degree: int) -> list[Switch]:
         N = max(len(left_nodes), len(right_nodes))
@@ -51,11 +55,14 @@ class AdhocNetworkWithMinimumDegree:
 
 
 class ClosNetworkWithMaxDegree(ClosNetworkBase):
+    """Clos network that limits the maximum degree (switch size). Call reset_max_degree before use."""
+
     num_elements_dict: ClassVar[dict[int, int]] = {}
-    max_degree: ClassVar[int] = 5  # TODO: Enable user to set this as a parameter
+    max_degree: ClassVar[int] = 5
 
     @classmethod
     def reset_max_degree(cls, new_max: int) -> None:
+        """Set the maximum allowed degree (switch size) for the network."""
         if new_max < 2:
             raise ValueError("new_max must be greater than or equal to 2")
 

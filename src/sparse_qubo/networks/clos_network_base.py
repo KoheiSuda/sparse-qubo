@@ -1,22 +1,25 @@
+"""Implementation of Clos network base: three-stage switching network with configurable switch sizes."""
+
 from abc import ABC, abstractmethod
 
-from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.network import ISwitchingNetwork
 from sparse_qubo.core.node import VariableNode
 from sparse_qubo.core.switch import Switch
 
 
-# Generate a Clos network
 class ClosNetworkBase(ISwitchingNetwork, ABC):
-    # Return implementation for small cases
+    """Base class for Clos-type networks (ingress, middle, egress stages)."""
+
     @classmethod
     @abstractmethod
     def _implement_if_small(cls, left_nodes: list[str], right_nodes: list[str]) -> list[Switch] | None:
+        """Return a small network for small N, or None to use the full Clos construction."""
         pass
 
-    # Determine the values of n and r
     @classmethod
     @abstractmethod
     def _determine_switch_sizes(cls, N_left: int, N_right: int) -> tuple[int, int]:
+        """Return (n, r) for exterior switch size n and number of interior switches r."""
         pass
 
     @classmethod
@@ -27,6 +30,7 @@ class ClosNetworkBase(ISwitchingNetwork, ABC):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Build the three-stage Clos network (ingress, middle, egress)."""
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
 

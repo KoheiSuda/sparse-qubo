@@ -1,3 +1,10 @@
+"""Switch elements and QUBO conversion for switching networks.
+
+A Switch encodes a constraint that the sum of left variables plus left_constant
+equals the sum of right variables plus right_constant. Switch.to_qubo converts
+a list of Switch elements into a single QUBO (variables, linear, quadratic, constant).
+"""
+
 import os
 import re
 from collections import defaultdict, deque
@@ -10,6 +17,8 @@ from pydantic import BaseModel, Field
 
 
 class QUBO(BaseModel):
+    """QUBO representation: variables, linear and quadratic coefficients, and constant."""
+
     variables: frozenset[str] = Field(description="Set of binary variables")
     quadratic: dict[frozenset[str], float] = Field(description="Coefficients between binary variables")
     linear: dict[str, float] = Field(description="Coefficients of binary variables")
@@ -17,10 +26,13 @@ class QUBO(BaseModel):
 
 
 class Switch(BaseModel):
-    # Names of binary variables
+    """Single switch: left and right variable sets and optional integer constants.
+
+    The constraint is: sum(left_nodes) + left_constant == sum(right_nodes) + right_constant.
+    """
+
     left_nodes: frozenset[str] = Field(default_factory=frozenset, description="Binary variables (left side)")
     right_nodes: frozenset[str] = Field(default_factory=frozenset, description="Binary variables (right side)")
-    # Constant term
     left_constant: int = Field(default=0, description="Constant term (left side)")
     right_constant: int = Field(default=0, description="Constant term (right side)")
 
@@ -34,22 +46,26 @@ class Switch(BaseModel):
 
     @property
     def num_variables(self) -> int:
+        """Number of variables in this switch (left + right)."""
         return len(self.left_nodes) + len(self.right_nodes)
 
     @property
     def num_edges(self) -> int:
+        """Number of quadratic terms if this switch were converted to QUBO alone."""
         return self.num_variables * (self.num_variables - 1) // 2
 
-    # Constant terms are not discarded
-    # At the call stage, each node in Switch is either NOT_CARE or ZERO_OR_ONE
-    # ALWAYS_ZERO and ALWAYS_ONE are processed as constant terms
-    # NOT_CARE is treated the same as ZERO_OR_ONE
     @classmethod
     def to_qubo(cls, switches: list[Self]) -> QUBO:
+        """Convert a list of Switch elements into a single QUBO (sum of (L + c_L - R - c_R)^2 terms)."""
         variables: set[str] = set()
         quadratic: dict[frozenset[str], float] = defaultdict(float)
         linear: dict[str, float] = defaultdict(float)
         constant: float = 0
+
+        # Constant terms are not discarded
+        # At the call stage, each node in Switch is either NOT_CARE or ZERO_OR_ONE
+        # ALWAYS_ZERO and ALWAYS_ONE are processed as constant terms
+        # NOT_CARE is treated the same as ZERO_OR_ONE
         for switch in switches:
             # (L1 + L2 - R1 - R2 + C)^2
             # = 2L1L2 + 2R1R2 - 2(L1R1 + ...)
@@ -86,6 +102,7 @@ class Switch(BaseModel):
 
     @classmethod
     def left_node_to_switch(cls, switches: list[Self]) -> dict[str, int]:
+        """Map each left-side variable name to the index of the switch that contains it."""
         left_node_to_switch: dict[str, int] = {}
         for idx, switch in enumerate(switches):
             for node in switch.left_nodes:
@@ -94,6 +111,7 @@ class Switch(BaseModel):
 
     @classmethod
     def right_node_to_switch(cls, switches: list[Self]) -> dict[str, int]:
+        """Map each right-side variable name to the index of the switch that contains it."""
         right_node_to_switch: dict[str, int] = {}
         for idx, switch in enumerate(switches):
             for node in switch.right_nodes:
@@ -105,11 +123,7 @@ class Switch(BaseModel):
         cls,
         switches: list[Self],
     ) -> dict[int, list[int]]:
-        """
-        Determine which layer each switch belongs to
-        Returns: {layer_number: [switch_indices]}
-        * layer_number is 0-indexed
-        """
+        """Determine which layer each switch belongs to. Returns {layer_number: [switch_indices]} (0-indexed)."""
         left_node_to_switch = cls.left_node_to_switch(switches)
         layer_structure: dict[int, list[int]] = {}
         switch_idx_to_layer_number: dict[int, int] = {}
@@ -149,6 +163,7 @@ class Switch(BaseModel):
         layer_spacing: float = 2.0,
         node_spacing: float = 1.0,
     ) -> None:
+        """Draw the relationship between variables and switches as a graph and save to output_path."""
         all_nodes: set[str] = set()
         for switch in switches:
             all_nodes.update(switch.left_nodes)

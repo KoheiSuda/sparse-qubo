@@ -2,8 +2,8 @@ from typing import cast
 
 import pytest
 
-from sparse_qubo.core.base_network import NetworkType
 from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo, get_initial_nodes
+from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute
 
 

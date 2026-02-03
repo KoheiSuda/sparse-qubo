@@ -1,10 +1,13 @@
-from sparse_qubo.core.base_network import ISwitchingNetwork
+"""Implementation of Bubble sort network"""
+
+from sparse_qubo.core.network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import Switch
 
 
-# Generate a network representing bubble sort
 class BubbleSortNetwork(ISwitchingNetwork):
+    """Bubble sort network; works for any variable count."""
+
     @classmethod
     def _generate_original_network(
         cls,
@@ -13,6 +16,7 @@ class BubbleSortNetwork(ISwitchingNetwork):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Return the list of Switch elements for the bubble sort network."""
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         if len(left_names) != len(right_names):

@@ -45,6 +45,7 @@ dev = [
     "dwave-cloud-client>=0.14.4",
     "dwave-ocean-sdk>=9.3.0",
     "pandas-stubs>=2.3.3.260113",
+    "pymdown-extensions>=10.19.1",
 ]
 
 [build-system]

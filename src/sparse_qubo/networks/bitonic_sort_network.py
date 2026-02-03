@@ -1,12 +1,15 @@
+"""Implementation of Bitonic sort network"""
+
 from math import log2
 
-from sparse_qubo.core.base_network import ISwitchingNetwork
+from sparse_qubo.core.network import ISwitchingNetwork
 from sparse_qubo.core.node import NodeAttribute, VariableNode
 from sparse_qubo.core.switch import Switch
 
 
-# Generate a network representing bitonic sort
 class BitonicSortNetwork(ISwitchingNetwork):
+    """Bitonic sort network; requires power-of-2 variable count."""
+
     @classmethod
     def _generate_original_network(
         cls,
@@ -15,6 +18,7 @@ class BitonicSortNetwork(ISwitchingNetwork):
         threshold: int | None = None,
         reverse: bool = False,
     ) -> list[Switch]:
+        """Return the list of Switch elements for the bitonic sort network."""
         left_names = [node.name for node in left_nodes]
         right_names = [node.name for node in right_nodes]
         if len(left_names) != len(right_names):
