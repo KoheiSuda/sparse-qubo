@@ -6,69 +6,82 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/KoheiSuda/sparse-qubo)](https://img.shields.io/github/commit-activity/m/KoheiSuda/sparse-qubo)
 [![License](https://img.shields.io/github/license/KoheiSuda/sparse-qubo)](https://img.shields.io/github/license/KoheiSuda/sparse-qubo)
 
-Sparse QUBO formulation for efficient embedding on hardware.
+**Sparse QUBO formulation for efficient embedding on hardware.**
 
-- **Github repository**: <https://github.com/KoheiSuda/sparse-qubo/>
-- **Documentation** <https://KoheiSuda.github.io/sparse-qubo/>
+`sparse-qubo` is a Python library that provides sparse QUBO (Quadratic Unconstrained Binary Optimization) formulations specifically for N-hot equality and inequality constraints. Constraint QUBOs are built from **switching networks**: each network is a list of **Switch** elements (left/right variable sets and constants), and the library converts them into QUBOs optimized for embedding on quantum annealing hardware (e.g. D-Wave) or other solvers.
 
-## Getting started with your project
+The method is based on the paper [*Sparse QUBO Formulation for Efficient Embedding via Network-Based Decomposition of Equality and Inequality Constraints*](https://arxiv.org/abs/2601.18108) (Suda, Naito, Hasegawa, 2026).
 
-### 1. Create a New Repository
+## Features
 
-First, create a repository on GitHub with the same name as this project, and then run the following commands:
+- **Constraint types**: One-hot, equal-to, less-equal, greater-equal, clamp
+- **Network types**: Naive (single linear equality), divide-and-conquer, bubble sort, bitonic sort, Benes, odd-even merge sort, Clos (max degree / minimum edge)
+- **Backends**: D-Wave (`dimod.BQM`) and Fixstars Amplify (`amplify.Model`)
+- **Examples**: Shift scheduling and TSP in `examples/` with notebooks and benchmarks
 
-```bash
-git init -b main
-git add .
-git commit -m "init commit"
-git remote add origin git@github.com:KoheiSuda/sparse-qubo.git
-git push -u origin main
-```
-
-### 2. Set Up Your Development Environment
-
-Then, install the environment and the pre-commit hooks with
+## Installation
 
 ```bash
-make install
+pip install sparse-qubo
 ```
 
-This will also generate your `uv.lock` file
-
-### 3. Run the pre-commit hooks
-
-Initially, the CI/CD pipeline might be failing due to formatting issues. To resolve those run:
+With [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv run pre-commit run -a
+uv add sparse-qubo
 ```
 
-### 4. Commit the changes
+## Quick Start
 
-Lastly, commit the changes made by the two steps above to your repository.
+```python
+import dimod
+import sparse_qubo
 
-```bash
-git add .
-git commit -m 'Fix formatting issues'
-git push origin main
+variables = dimod.variables.Variables(["x0", "x1", "x2", "x3"])
+
+# One-hot constraint (divide-and-conquer network)
+bqm = sparse_qubo.create_constraint_dwave(
+    variables,
+    sparse_qubo.ConstraintType.ONE_HOT,
+    sparse_qubo.NetworkType.DIVIDE_AND_CONQUER,
+)
+
+# Equal-to: sum = 2
+bqm = sparse_qubo.create_constraint_dwave(
+    variables, sparse_qubo.ConstraintType.EQUAL_TO,
+    sparse_qubo.NetworkType.DIVIDE_AND_CONQUER,
+    c1=2,
+)
 ```
 
-You are now ready to start development on your project!
-The CI/CD pipeline will be triggered when you open a pull request, merge to main, or when you create a new release.
+For Fixstars Amplify, use `sparse_qubo.create_constraint_amplify` with a list of `amplify.Variable`. See the [documentation](https://KoheiSuda.github.io/sparse-qubo/) for more examples and the full API.
 
-To finalize the set-up for publishing to PyPI, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/publishing/#set-up-for-pypi).
-For activating the automatic documentation with MkDocs, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/mkdocs/#enabling-the-documentation-on-github).
-To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/codecov/).
+## Examples
 
-## Releasing a new version
+The `examples/` directory includes:
 
-- Create an API Token on [PyPI](https://pypi.org/).
-- Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/KoheiSuda/sparse-qubo/settings/secrets/actions/new).
-- Create a [new release](https://github.com/KoheiSuda/sparse-qubo/releases/new) on Github.
-- Create a new tag in the form `*.*.*`.
+- **Shift scheduling** (`examples/shift_scheduling/`): Demo notebook comparing NAIVE vs DIVIDE_AND_CONQUER on D-Wave, plus `create_scheduling_problem_bqm` and benchmarks
+- **TSP** (`examples/tsp/`): Problem builder and benchmarks for traveling salesman formulations
 
-For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/cicd/#how-to-trigger-a-release).
 
----
+## Documentation
 
-Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
+- **Documentation**: <https://KoheiSuda.github.io/sparse-qubo/>
+- **API reference**: [modules](https://KoheiSuda.github.io/sparse-qubo/modules/)
+
+## Reference
+
+**Kohei Suda, Soshun Naito, Yoshihiko Hasegawa.** *Sparse QUBO Formulation for Efficient Embedding via Network-Based Decomposition of Equality and Inequality Constraints.* arXiv:2601.18108, 2026. <https://arxiv.org/abs/2601.18108>
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/KoheiSuda/sparse-qubo/blob/main/CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the terms in [LICENSE](https://github.com/KoheiSuda/sparse-qubo/blob/main/LICENSE).
+
+## Links
+
+- **GitHub**: <https://github.com/KoheiSuda/sparse-qubo>
+- **PyPI**: <https://pypi.org/project/sparse-qubo/>
