@@ -40,22 +40,22 @@ class TestBubbleSortNetwork:
         assert not c0.right_nodes
 
     def test_bubble_sort_network_all_zero(self) -> None:
-        """Test BubbleSortNetwork with all zeros."""
+        """Test BubbleSortNetwork with all zeros: left nodes are determined to 0, no Switch needed."""
         size = 3
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(size)]
 
         switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(switches) > 0
+        assert len(switches) == 0
 
     def test_bubble_sort_network_all_one(self) -> None:
-        """Test BubbleSortNetwork with all ones."""
+        """Test BubbleSortNetwork with all ones: left nodes are determined to 1, no Switch needed."""
         size = 3
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(size)]
 
         switches = BubbleSortNetwork.generate_network(left_nodes, right_nodes)
-        assert len(switches) > 0
+        assert len(switches) == 0
 
     def test_bubble_sort_network_reverse(self) -> None:
         """Test BubbleSortNetwork with reverse parameter."""

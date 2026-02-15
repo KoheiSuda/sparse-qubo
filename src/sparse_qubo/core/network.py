@@ -88,26 +88,10 @@ class ISwitchingNetwork(ABC):
             if right_sum_min == num_left_variables:
                 for node in switch.left_nodes:
                     name_to_attribute[node] = NodeAttribute.ALWAYS_ONE
-                    result_network.append(
-                        Switch(
-                            left_nodes=frozenset([node]),
-                            right_nodes=frozenset(),
-                            left_constant=0,
-                            right_constant=1,
-                        )
-                    )
             # When the right side's upper bound is 0, all left nodes must be 0
             elif right_sum_max == 0:
                 for node in switch.left_nodes:
                     name_to_attribute[node] = NodeAttribute.ALWAYS_ZERO
-                    result_network.append(
-                        Switch(
-                            left_nodes=frozenset([node]),
-                            right_nodes=frozenset(),
-                            left_constant=0,
-                            right_constant=0,
-                        )
-                    )
             # When all right nodes are NOT_CARE and there are no restrictions on the left side's possible value range, all left nodes become NOT_CARE
             elif (
                 all(name_to_attribute[node] == NodeAttribute.NOT_CARE for node in switch.right_nodes)

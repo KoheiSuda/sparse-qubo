@@ -42,7 +42,9 @@ class Switch(BaseModel):
             raise ValueError("Duplicate variables found between left_nodes and right_nodes")
 
     def __repr__(self) -> str:
-        return f"Switch(left={sorted(self.left_nodes)} + {self.left_constant}, right={sorted(self.right_nodes)} + {self.right_constant})"
+        left = f"{sorted(self.left_nodes)}" + (f" + {self.left_constant}" if self.left_constant != 0 else "")
+        right = f"{sorted(self.right_nodes)}" + (f" + {self.right_constant}" if self.right_constant != 0 else "")
+        return f"Switch(left={left}, right={right})"
 
     @property
     def num_variables(self) -> int:
