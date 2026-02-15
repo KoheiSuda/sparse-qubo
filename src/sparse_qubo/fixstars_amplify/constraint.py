@@ -45,9 +45,7 @@ def naive_constraint(
     return amplify.Model(constraint)
 
 
-def generate_amplify_model(
-    gen: amplify.VariableGenerator, original_vars: list[amplify.Variable], switches: list[Switch]
-) -> amplify.Model:
+def generate_amplify_model(gen: amplify.VariableGenerator, switches: list[Switch]) -> amplify.Model:
     """Build an Amplify model from a list of Amplify variables and a list of Switches."""
     all_vars = [gen.scalar("Binary", name=name).as_variable() for name in get_variables_from_switches(switches)]
     vars_dict = {v.name: v for v in all_vars}
@@ -76,4 +74,4 @@ def constraint(
 
     variable_names = [v.name for v in variables]
     switches = get_constraint_switches(variable_names, constraint_type, network_type, c1, c2, threshold)
-    return generate_amplify_model(gen, variables, switches)
+    return generate_amplify_model(gen, switches)

@@ -1,14 +1,14 @@
 """Constraint types and QUBO construction for equality/inequality constraints.
 
-This module provides ConstraintType, get_initial_nodes, and get_constraint_qubo
-to build QUBOs from switching networks for use with D-Wave or Amplify.
+This module provides ConstraintType, get_initial_nodes and get_constraint_switches to build Switches from
+switching networks for use with D-Wave or Amplify.
 """
 
 from enum import StrEnum
 
 from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.switch import QUBO, Switch
+from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.benes_network import BenesNetwork
 from sparse_qubo.networks.bitonic_sort_network import BitonicSortNetwork
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
@@ -18,7 +18,7 @@ from sparse_qubo.networks.divide_and_conquer_network import DivideAndConquerNetw
 from sparse_qubo.networks.oddeven_merge_sort_network import OddEvenMergeSortNetwork
 
 # Internal counter for auto-assigning unique prefixes to auxiliary variables.
-# Incremented on each get_constraint_qubo(..., var_prefix=None) call.
+# Incremented on each get_constraint_switches(..., var_prefix=None) call.
 _constraint_prefix_counter = 0
 
 
@@ -58,7 +58,7 @@ def get_initial_nodes(
 ) -> tuple[list[VariableNode], list[VariableNode]]:
     """Build left and right VariableNode lists for a switching network from variable names and constraint type.
 
-    Used by get_constraint_qubo and by network implementations. If exponentiation is True,
+    Used by get_constraint_switches and by network implementations. If exponentiation is True,
     the right side is padded to a power-of-2 size (for Benes, Bitonic, OddEvenMergeSort).
     """
     original_size = len(variables)
@@ -187,20 +187,3 @@ def get_constraint_switches(
         case _:
             raise NotImplementedError
     return _prefix_auxiliary_variables(switches, set(variables), var_prefix)
-
-
-def get_constraint_qubo(
-    variables: list[str],
-    constraint_type: ConstraintType,
-    network_type: NetworkType = NetworkType.DIVIDE_AND_CONQUER,
-    c1: int | None = None,
-    c2: int | None = None,
-    threshold: int | None = None,
-    reverse: bool = False,
-    var_prefix: str | None = None,
-) -> QUBO:
-    """Build a QUBO for the given constraint."""
-
-    switches = get_constraint_switches(variables, constraint_type, network_type, c1, c2, threshold, reverse, var_prefix)
-
-    return Switch.to_qubo(switches)

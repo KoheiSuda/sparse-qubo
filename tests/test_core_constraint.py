@@ -2,9 +2,10 @@ from typing import cast
 
 import pytest
 
-from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo, get_initial_nodes
+from sparse_qubo.core.constraint import ConstraintType, get_constraint_switches, get_initial_nodes
 from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute
+from sparse_qubo.core.switch import switches_to_qubo
 
 
 class TestConstraintType:
@@ -113,13 +114,14 @@ class TestGetInitialNodes:
             get_initial_nodes(variables, cast(ConstraintType, "unsupported"))
 
 
-class TestGetConstraintQUBO:
-    """Tests for get_constraint_qubo function."""
+class TestGetConstraintSwitchesAndQUBO:
+    """Tests for get_constraint_switches and switches_to_qubo (replacing get_constraint_qubo)."""
 
     def test_one_hot_divide_and_conquer(self) -> None:
-        """Test get_constraint_qubo for ONE_HOT with DIVIDE_AND_CONQUER."""
+        """Test get_constraint_switches + switches_to_qubo for ONE_HOT with DIVIDE_AND_CONQUER."""
         variables = ["x0", "x1", "x2"]
-        qubo = get_constraint_qubo(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        switches = get_constraint_switches(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
@@ -127,63 +129,76 @@ class TestGetConstraintQUBO:
         assert isinstance(qubo.linear, dict)
 
     def test_equal_to_bubble_sort(self) -> None:
-        """Test get_constraint_qubo for EQUAL_TO with BUBBLE_SORT."""
+        """Test get_constraint_switches + switches_to_qubo for EQUAL_TO with BUBBLE_SORT."""
         variables = ["x0", "x1", "x2", "x3"]
-        qubo = get_constraint_qubo(variables, ConstraintType.EQUAL_TO, NetworkType.BUBBLE_SORT, c1=2)
+        switches = get_constraint_switches(variables, ConstraintType.EQUAL_TO, NetworkType.BUBBLE_SORT, c1=2)
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_less_equal_clos_network(self) -> None:
-        """Test get_constraint_qubo for LESS_EQUAL with CLOS_NETWORK_MAX_DEGREE."""
+        """Test get_constraint_switches + switches_to_qubo for LESS_EQUAL with CLOS_NETWORK_MAX_DEGREE."""
         variables = ["x0", "x1", "x2", "x3", "x4"]
-        qubo = get_constraint_qubo(variables, ConstraintType.LESS_EQUAL, NetworkType.CLOS_NETWORK_MAX_DEGREE, c1=3)
+        switches = get_constraint_switches(
+            variables, ConstraintType.LESS_EQUAL, NetworkType.CLOS_NETWORK_MAX_DEGREE, c1=3
+        )
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_greater_equal_bitonic_sort(self) -> None:
-        """Test get_constraint_qubo for GREATER_EQUAL with BITONIC_SORT."""
+        """Test get_constraint_switches + switches_to_qubo for GREATER_EQUAL with BITONIC_SORT."""
         variables = ["x0", "x1", "x2", "x3"]
-        qubo = get_constraint_qubo(variables, ConstraintType.GREATER_EQUAL, NetworkType.BITONIC_SORT, c1=1)
+        switches = get_constraint_switches(variables, ConstraintType.GREATER_EQUAL, NetworkType.BITONIC_SORT, c1=1)
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_clamp_oddeven_merge_sort(self) -> None:
-        """Test get_constraint_qubo for CLAMP with ODDEVEN_MERGE_SORT."""
+        """Test get_constraint_switches + switches_to_qubo for CLAMP with ODDEVEN_MERGE_SORT."""
         variables = ["x0", "x1", "x2", "x3"]
-        qubo = get_constraint_qubo(variables, ConstraintType.CLAMP, NetworkType.ODDEVEN_MERGE_SORT, c1=1, c2=2)
+        switches = get_constraint_switches(variables, ConstraintType.CLAMP, NetworkType.ODDEVEN_MERGE_SORT, c1=1, c2=2)
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_benes_network(self) -> None:
-        """Test get_constraint_qubo with BENES network."""
+        """Test get_constraint_switches + switches_to_qubo with BENES network."""
         variables = ["x0", "x1", "x2", "x3"]
-        qubo = get_constraint_qubo(variables, ConstraintType.ONE_HOT, NetworkType.BENES)
+        switches = get_constraint_switches(variables, ConstraintType.ONE_HOT, NetworkType.BENES)
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_unsupported_network_type(self) -> None:
-        """Test get_constraint_qubo raises error for unsupported network type."""
+        """Test get_constraint_switches raises error for unsupported network type."""
         variables = ["x0", "x1"]
         with pytest.raises(NotImplementedError):
-            get_constraint_qubo(variables, ConstraintType.ONE_HOT, cast(NetworkType, "unsupported"))
+            get_constraint_switches(variables, ConstraintType.ONE_HOT, cast(NetworkType, "unsupported"))
 
     def test_with_threshold(self) -> None:
-        """Test get_constraint_qubo with threshold parameter."""
+        """Test get_constraint_switches + switches_to_qubo with threshold parameter."""
         variables = ["x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7"]
-        qubo = get_constraint_qubo(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER, threshold=4)
+        switches = get_constraint_switches(
+            variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER, threshold=4
+        )
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
 
     def test_with_reverse(self) -> None:
-        """Test get_constraint_qubo with reverse parameter."""
+        """Test get_constraint_switches + switches_to_qubo with reverse parameter."""
         variables = ["x0", "x1", "x2", "x3"]
-        qubo = get_constraint_qubo(variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER, reverse=True)
+        switches = get_constraint_switches(
+            variables, ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER, reverse=True
+        )
+        qubo = switches_to_qubo(switches)
 
         assert isinstance(qubo.variables, frozenset)
         assert len(qubo.variables) > 0
@@ -193,7 +208,9 @@ class TestGetConstraintQUBO:
         from sparse_qubo.core.constraint import reset_constraint_prefix_counter
 
         reset_constraint_prefix_counter()
-        qubo1 = get_constraint_qubo(["a", "b", "c"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
-        qubo2 = get_constraint_qubo(["x", "y", "z"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        switches1 = get_constraint_switches(["a", "b", "c"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        switches2 = get_constraint_switches(["x", "y", "z"], ConstraintType.ONE_HOT, NetworkType.DIVIDE_AND_CONQUER)
+        qubo1 = switches_to_qubo(switches1)
+        qubo2 = switches_to_qubo(switches2)
         # User variables differ; internal prefix makes auxiliary names disjoint
         assert qubo1.variables.isdisjoint(qubo2.variables), "auxiliary variables should not collide"
