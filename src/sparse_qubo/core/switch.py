@@ -329,7 +329,7 @@ class Switch(BaseModel):
             )
 
 
-def get_variables_from_switches(switches: list[Self]) -> list[str]:
+def get_variables_from_switches(switches: list[Switch]) -> list[str]:
     """Get all variables from a list of Switches."""
 
     variables: set[str] = set()

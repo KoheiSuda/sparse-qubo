@@ -52,8 +52,8 @@ def generate_amplify_model(gen: amplify.VariableGenerator, switches: list[Switch
     model = amplify.Model()
     for switch in switches:
         model += amplify.equal_to(
-            sum([amplify.Poly(vars_dict[v]) for v in switch.left_nodes])
-            - sum([amplify.Poly(vars_dict[v]) for v in switch.right_nodes]),
+            amplify.sum([amplify.Poly(vars_dict[v]) for v in switch.left_nodes])
+            - amplify.sum([amplify.Poly(vars_dict[v]) for v in switch.right_nodes]),
             switch.right_constant - switch.left_constant,
         )
     return model
