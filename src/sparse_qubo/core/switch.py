@@ -373,3 +373,13 @@ class Switch(BaseModel):
                 fontweight="bold",
                 bbox={"boxstyle": "round,pad=0.3", "facecolor": "lightblue", "alpha": 0.7},
             )
+
+
+def get_variables_from_switches(switches: list[Self]) -> list[str]:
+    """Get all variables from a list of Switches."""
+
+    variables: set[str] = set()
+    for switch in switches:
+        variables.update(switch.left_nodes)
+        variables.update(switch.right_nodes)
+    return list(variables)

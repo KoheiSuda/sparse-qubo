@@ -6,9 +6,9 @@ to obtain an amplify.Model for use with Amplify solvers.
 
 import amplify
 
-from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
+from sparse_qubo.core.constraint import ConstraintType, get_constraint_switches
 from sparse_qubo.core.network import NetworkType
-from sparse_qubo.core.switch import QUBO
+from sparse_qubo.core.switch import Switch, get_variables_from_switches
 
 
 def naive_constraint(
@@ -45,21 +45,24 @@ def naive_constraint(
     return amplify.Model(constraint)
 
 
-def generate_amplify_model(variables: list[amplify.Variable], qubo: QUBO) -> amplify.Model:
-    """Build an Amplify model from a list of Amplify variables and a QUBO (linear + quadratic + constant)."""
-    poly_map = {v.name: amplify.Poly(v) for v in variables}
-    objectives = amplify.Poly(0)
-
-    for (v1, v2), coef in qubo.quadratic.items():
-        objectives += coef * poly_map[v1] * poly_map[v2]
-    for v, coef in qubo.linear.items():
-        objectives += coef * poly_map[v]
-    objectives += qubo.constant
-
-    return amplify.Model(objectives)
+def generate_amplify_model(
+    gen: amplify.VariableGenerator, original_vars: list[amplify.Variable], switches: list[Switch]
+) -> amplify.Model:
+    """Build an Amplify model from a list of Amplify variables and a list of Switches."""
+    all_vars = [gen.scalar("Binary", name=name).as_variable() for name in get_variables_from_switches(switches)]
+    vars_dict = {v.name: v for v in all_vars}
+    model = amplify.Model()
+    for switch in switches:
+        model += amplify.equal_to(
+            sum([amplify.Poly(vars_dict[v]) for v in switch.left_nodes])
+            - sum([amplify.Poly(vars_dict[v]) for v in switch.right_nodes]),
+            switch.right_constant - switch.left_constant,
+        )
+    return model
 
 
 def constraint(
+    gen: amplify.VariableGenerator,
     variables: list[amplify.Variable],
     constraint_type: ConstraintType,
     network_type: NetworkType = NetworkType.DIVIDE_AND_CONQUER,
@@ -69,10 +72,8 @@ def constraint(
 ) -> amplify.Model:
     """Build an Amplify model for the given constraint using the specified network type (or NAIVE)."""
     if network_type == NetworkType.NAIVE:
-        model = naive_constraint(variables, constraint_type, c1, c2)
-        return model
+        return naive_constraint(variables, constraint_type, c1, c2)
 
     variable_names = [v.name for v in variables]
-    qubo = get_constraint_qubo(variable_names, constraint_type, network_type, c1, c2, threshold)
-    model = generate_amplify_model(variables, qubo)
-    return model
+    switches = get_constraint_switches(variable_names, constraint_type, network_type, c1, c2, threshold)
+    return generate_amplify_model(gen, variables, switches)
