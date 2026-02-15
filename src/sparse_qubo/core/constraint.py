@@ -1,14 +1,14 @@
 """Constraint types and QUBO construction for equality/inequality constraints.
 
-This module provides ConstraintType, get_initial_nodes, and get_constraint_qubo
-to build QUBOs from switching networks for use with D-Wave or Amplify.
+This module provides ConstraintType, get_initial_nodes and get_constraint_switches to build Switches from
+switching networks for use with D-Wave or Amplify.
 """
 
 from enum import StrEnum
 
 from sparse_qubo.core.network import NetworkType
 from sparse_qubo.core.node import NodeAttribute, VariableNode
-from sparse_qubo.core.switch import QUBO, Switch
+from sparse_qubo.core.switch import Switch
 from sparse_qubo.networks.benes_network import BenesNetwork
 from sparse_qubo.networks.bitonic_sort_network import BitonicSortNetwork
 from sparse_qubo.networks.bubble_sort_network import BubbleSortNetwork
@@ -18,7 +18,7 @@ from sparse_qubo.networks.divide_and_conquer_network import DivideAndConquerNetw
 from sparse_qubo.networks.oddeven_merge_sort_network import OddEvenMergeSortNetwork
 
 # Internal counter for auto-assigning unique prefixes to auxiliary variables.
-# Incremented on each get_constraint_qubo(..., var_prefix=None) call.
+# Incremented on each get_constraint_switches(..., var_prefix=None) call.
 _constraint_prefix_counter = 0
 
 
@@ -58,7 +58,7 @@ def get_initial_nodes(
 ) -> tuple[list[VariableNode], list[VariableNode]]:
     """Build left and right VariableNode lists for a switching network from variable names and constraint type.
 
-    Used by get_constraint_qubo and by network implementations. If exponentiation is True,
+    Used by get_constraint_switches and by network implementations. If exponentiation is True,
     the right side is padded to a power-of-2 size (for Benes, Bitonic, OddEvenMergeSort).
     """
     original_size = len(variables)
@@ -109,24 +109,24 @@ def get_initial_nodes(
     return left_nodes, right_nodes
 
 
-def _prefix_auxiliary_variables(qubo: QUBO, original_variables: set[str], prefix: str) -> QUBO:
+def _prefix_auxiliary_variables(switches: list[Switch], original_variables: set[str], prefix: str) -> list[Switch]:
     """Rename all auxiliary variables (not in original_variables) by adding prefix."""
 
     def renamed(v: str) -> str:
         return f"{prefix}_{v}" if v not in original_variables else v
 
-    new_linear = {renamed(v): coef for v, coef in qubo.linear.items()}
-    new_quadratic = {frozenset({renamed(v) for v in pair}): coef for pair, coef in qubo.quadratic.items()}
-    new_variables = frozenset(renamed(v) for v in qubo.variables)
-    return QUBO(
-        variables=new_variables,
-        linear=new_linear,
-        quadratic=new_quadratic,
-        constant=qubo.constant,
-    )
+    return [
+        Switch(
+            left_nodes=frozenset([renamed(v) for v in switch.left_nodes]),
+            right_nodes=frozenset([renamed(v) for v in switch.right_nodes]),
+            left_constant=switch.left_constant,
+            right_constant=switch.right_constant,
+        )
+        for switch in switches
+    ]
 
 
-def get_constraint_qubo(
+def get_constraint_switches(
     variables: list[str],
     constraint_type: ConstraintType,
     network_type: NetworkType = NetworkType.DIVIDE_AND_CONQUER,
@@ -135,8 +135,8 @@ def get_constraint_qubo(
     threshold: int | None = None,
     reverse: bool = False,
     var_prefix: str | None = None,
-) -> QUBO:
-    """Build a QUBO for the given constraint.
+) -> list[Switch]:
+    """Build a list of Switches for the given constraint.
 
     **Auxiliary variable prefixes**
 
@@ -186,6 +186,4 @@ def get_constraint_qubo(
             )
         case _:
             raise NotImplementedError
-    qubo = Switch.to_qubo(switches)
-    qubo = _prefix_auxiliary_variables(qubo, set(variables), var_prefix)
-    return qubo
+    return _prefix_auxiliary_variables(switches, set(variables), var_prefix)

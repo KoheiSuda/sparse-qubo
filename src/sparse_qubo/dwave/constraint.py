@@ -7,8 +7,9 @@ to obtain a BinaryQuadraticModel for use with D-Wave samplers or dimod.
 import dimod
 import dimod.variables
 
-from sparse_qubo.core.constraint import ConstraintType, get_constraint_qubo
+from sparse_qubo.core.constraint import ConstraintType, get_constraint_switches
 from sparse_qubo.core.network import NetworkType
+from sparse_qubo.core.switch import switches_to_qubo
 
 
 def naive_constraint(
@@ -61,7 +62,8 @@ def constraint(
         return bqm
 
     variable_names = [str(v) for v in variables]
-    qubo = get_constraint_qubo(variable_names, constraint_type, network_type, c1, c2, threshold)
+    switches = get_constraint_switches(variable_names, constraint_type, network_type, c1, c2, threshold)
+    qubo = switches_to_qubo(switches)
     bqm = dimod.BinaryQuadraticModel(
         qubo.linear,
         qubo.quadratic,

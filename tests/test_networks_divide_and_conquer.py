@@ -16,24 +16,22 @@ class TestDivideAndConquerNetwork:
             DivideAndConquerNetwork._generate_original_network(left_nodes, right_nodes)
 
     def test_divide_and_conquer_all_zero(self) -> None:
-        """Test DivideAndConquerNetwork with all zeros."""
+        """Test DivideAndConquerNetwork with all zeros: left nodes are determined to 0, no Switch needed."""
         size = 4
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ZERO) for i in range(size)]
 
         switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
-        # Should have direct connections
-        assert len(switches) == size
+        assert len(switches) == 0
 
     def test_divide_and_conquer_all_one(self) -> None:
-        """Test DivideAndConquerNetwork with all ones."""
+        """Test DivideAndConquerNetwork with all ones: left nodes are determined to 1, no Switch needed."""
         size = 4
         left_nodes = [VariableNode(name=f"L{i}") for i in range(size)]
         right_nodes = [VariableNode(name=f"R{i}", attribute=NodeAttribute.ALWAYS_ONE) for i in range(size)]
 
         switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
-        # Should have direct connections
-        assert len(switches) == size
+        assert len(switches) == 0
 
     def test_divide_and_conquer_one_hot(self) -> None:
         """Test DivideAndConquerNetwork with one-hot constraint."""

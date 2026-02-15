@@ -1,4 +1,4 @@
-from sparse_qubo.core.switch import QUBO, Switch
+from sparse_qubo.core.switch import QUBO, Switch, switches_to_qubo
 
 
 class TestSwitch:
@@ -59,7 +59,7 @@ class TestSwitch:
 
 
 class TestSwitchToQUBO:
-    """Tests for Switch.to_qubo method."""
+    """Tests for switches_to_qubo function."""
 
     def test_single_switch_to_qubo(self) -> None:
         """Test converting a single Switch to QUBO."""
@@ -67,7 +67,7 @@ class TestSwitchToQUBO:
             left_nodes=frozenset(["L0", "L1"]),
             right_nodes=frozenset(["R0", "R1"]),
         )
-        qubo = Switch.to_qubo([switch])
+        qubo = switches_to_qubo([switch])
 
         # Check variables
         assert qubo.variables == frozenset(["L0", "L1", "R0", "R1"])
@@ -97,7 +97,7 @@ class TestSwitchToQUBO:
             left_constant=1,
             right_constant=2,
         )
-        qubo = Switch.to_qubo([switch])
+        qubo = switches_to_qubo([switch])
 
         # switch_constant = 1 - 2 = -1
         # Linear terms: L0 has 2*(-1) + 1 = -1, R0 has -2*(-1) + 1 = 3
@@ -117,7 +117,7 @@ class TestSwitchToQUBO:
             left_nodes=frozenset(["L1"]),
             right_nodes=frozenset(["R1"]),
         )
-        qubo = Switch.to_qubo([switch1, switch2])
+        qubo = switches_to_qubo([switch1, switch2])
 
         assert qubo.variables == frozenset(["L0", "L1", "R0", "R1"])
         # Each switch contributes independently

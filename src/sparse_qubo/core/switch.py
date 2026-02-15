@@ -1,7 +1,7 @@
 """Switch elements and QUBO conversion for switching networks.
 
 A Switch encodes a constraint that the sum of left variables plus left_constant
-equals the sum of right variables plus right_constant. Switch.to_qubo converts
+equals the sum of right variables plus right_constant. switches_to_qubo converts
 a list of Switch elements into a single QUBO (variables, linear, quadratic, constant).
 """
 
@@ -42,7 +42,9 @@ class Switch(BaseModel):
             raise ValueError("Duplicate variables found between left_nodes and right_nodes")
 
     def __repr__(self) -> str:
-        return f"Switch(left={sorted(self.left_nodes)} + {self.left_constant}, right={sorted(self.right_nodes)} + {self.right_constant})"
+        left = f"{sorted(self.left_nodes)}" + (f" + {self.left_constant}" if self.left_constant != 0 else "")
+        right = f"{sorted(self.right_nodes)}" + (f" + {self.right_constant}" if self.right_constant != 0 else "")
+        return f"Switch(left={left}, right={right})"
 
     @property
     def num_variables(self) -> int:
@@ -53,52 +55,6 @@ class Switch(BaseModel):
     def num_edges(self) -> int:
         """Number of quadratic terms if this switch were converted to QUBO alone."""
         return self.num_variables * (self.num_variables - 1) // 2
-
-    @classmethod
-    def to_qubo(cls, switches: list[Self]) -> QUBO:
-        """Convert a list of Switch elements into a single QUBO (sum of (L + c_L - R - c_R)^2 terms)."""
-        variables: set[str] = set()
-        quadratic: dict[frozenset[str], float] = defaultdict(float)
-        linear: dict[str, float] = defaultdict(float)
-        constant: float = 0
-
-        # Constant terms are not discarded
-        # At the call stage, each node in Switch is either NOT_CARE or ZERO_OR_ONE
-        # ALWAYS_ZERO and ALWAYS_ONE are processed as constant terms
-        # NOT_CARE is treated the same as ZERO_OR_ONE
-        for switch in switches:
-            # (L1 + L2 - R1 - R2 + C)^2
-            # = 2L1L2 + 2R1R2 - 2(L1R1 + ...)
-            # + L1 + L2 + R1 + R2 + 2C(L1 + L2 - R1 - R2)
-            # + C^2
-
-            switch_constant = switch.left_constant - switch.right_constant
-            variables.update(switch.left_nodes)
-            variables.update(switch.right_nodes)
-            # quadratic
-            for node1, node2 in combinations(switch.left_nodes, 2):
-                quadratic[frozenset((node1, node2))] += 2
-            for node1, node2 in combinations(switch.right_nodes, 2):
-                quadratic[frozenset((node1, node2))] += 2
-            for node1, node2 in product(switch.left_nodes, switch.right_nodes):
-                quadratic[frozenset((node1, node2))] -= 2
-            # linear
-            for node in switch.left_nodes:
-                linear[node] += 2 * switch_constant
-                linear[node] += 1  # Because x*x = x
-            for node in switch.right_nodes:
-                linear[node] -= 2 * switch_constant
-                linear[node] += 1
-            # constant
-            constant += switch_constant**2
-        qubo = QUBO(
-            variables=frozenset(variables),
-            quadratic=quadratic,
-            linear=linear,
-            constant=constant,
-        )
-
-        return qubo
 
     @classmethod
     def left_node_to_switch(cls, switches: list[Self]) -> dict[str, int]:
@@ -371,3 +327,59 @@ class Switch(BaseModel):
                 fontweight="bold",
                 bbox={"boxstyle": "round,pad=0.3", "facecolor": "lightblue", "alpha": 0.7},
             )
+
+
+def get_variables_from_switches(switches: list[Switch]) -> list[str]:
+    """Get all variables from a list of Switches."""
+
+    variables: set[str] = set()
+    for switch in switches:
+        variables.update(switch.left_nodes)
+        variables.update(switch.right_nodes)
+    return list(variables)
+
+
+def switches_to_qubo(switches: list[Switch]) -> QUBO:
+    """Convert a list of Switch elements into a single QUBO (sum of (L + c_L - R - c_R)^2 terms)."""
+    variables: set[str] = set()
+    quadratic: dict[frozenset[str], float] = defaultdict(float)
+    linear: dict[str, float] = defaultdict(float)
+    constant: float = 0
+
+    # Constant terms are not discarded
+    # At the call stage, each node in Switch is either NOT_CARE or ZERO_OR_ONE
+    # ALWAYS_ZERO and ALWAYS_ONE are processed as constant terms
+    # NOT_CARE is treated the same as ZERO_OR_ONE
+    for switch in switches:
+        # (L1 + L2 - R1 - R2 + C)^2
+        # = 2L1L2 + 2R1R2 - 2(L1R1 + ...)
+        # + L1 + L2 + R1 + R2 + 2C(L1 + L2 - R1 - R2)
+        # + C^2
+
+        switch_constant = switch.left_constant - switch.right_constant
+        variables.update(switch.left_nodes)
+        variables.update(switch.right_nodes)
+        # quadratic
+        for node1, node2 in combinations(switch.left_nodes, 2):
+            quadratic[frozenset((node1, node2))] += 2
+        for node1, node2 in combinations(switch.right_nodes, 2):
+            quadratic[frozenset((node1, node2))] += 2
+        for node1, node2 in product(switch.left_nodes, switch.right_nodes):
+            quadratic[frozenset((node1, node2))] -= 2
+        # linear
+        for node in switch.left_nodes:
+            linear[node] += 2 * switch_constant
+            linear[node] += 1  # Because x*x = x
+        for node in switch.right_nodes:
+            linear[node] -= 2 * switch_constant
+            linear[node] += 1
+        # constant
+        constant += switch_constant**2
+    qubo = QUBO(
+        variables=frozenset(variables),
+        quadratic=quadratic,
+        linear=linear,
+        constant=constant,
+    )
+
+    return qubo

@@ -2,7 +2,7 @@
 
 ## Constraint prefix counter
 
-When you build constraint QUBOs with `get_constraint_qubo` or high-level APIs like `sparse_qubo.create_constraint_dwave()` and `sparse_qubo.create_constraint_amplify()`, the library adds **auxiliary variables** (e.g. `L0`, `R0`, and variables introduced by the switching network built from **Switch** elements). See [Getting Started](getting-started.md) for the Switch/switching-network overview. To avoid name collisions when merging multiple constraint QUBOs into one BQM, each constraint’s auxiliary variables are given a unique **prefix** (e.g. `C0_L0`, `C1_L0`).
+When you build constraint QUBOs with `get_constraint_switches` (plus `switches_to_qubo`) or high-level APIs like `sparse_qubo.create_constraint_dwave()` and `sparse_qubo.create_constraint_amplify()`, the library adds **auxiliary variables** (e.g. `L0`, `R0`, and variables introduced by the switching network built from **Switch** elements). See [Getting Started](getting-started.md) for the Switch/switching-network overview. To avoid name collisions when merging multiple constraint QUBOs into one BQM, each constraint’s auxiliary variables are given a unique **prefix** (e.g. `C0_L0`, `C1_L0`).
 
 ### How the counter behaves
 

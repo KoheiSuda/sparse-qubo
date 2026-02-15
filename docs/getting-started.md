@@ -33,7 +33,7 @@ with binary variables $x_i \in \{0, 1\}$.
 Constraint QUBOs in this library are built from **switching networks**. A switching network is a list of **Switch** objects. Each Switch has:
 
 - **Left and right variable sets**: Two disjoint sets of binary variable names and optional integer constants. The constraint is encoded by requiring that the sum on the left equals the sum on the right (up to constants) for each Switch.
-- **QUBO conversion**: The function `Switch.to_qubo(switches)` turns a list of Switch elements into a single QUBO (variables, linear, quadratic, constant).
+- **QUBO conversion**: The function `switches_to_qubo(switches)` (from `sparse_qubo.core.switch`) turns a list of Switch elements into a single QUBO (variables, linear, quadratic, constant).
 
 Different **network types** (e.g. divide-and-conquer, Benes, bubble sort) produce different sequences of Switch elements and thus different variable counts and sparsity. The **NAIVE** network type does not use switching networks; it encodes the constraint as a single squared term in the usual way (no additional variables, denser quadratic terms).
 
@@ -115,15 +115,17 @@ bqm = sparse_qubo.create_constraint_dwave(variables, sparse_qubo.ConstraintType.
 For direct access to QUBO or switching networks:
 
 ```python
-from sparse_qubo.core.constraint import get_constraint_qubo, ConstraintType
+from sparse_qubo.core.constraint import get_constraint_switches, ConstraintType
 from sparse_qubo.core.network import NetworkType
+from sparse_qubo.core.switch import switches_to_qubo
 
-# Get QUBO (variables, linear, quadratic, constant)
-qubo = get_constraint_qubo(
+# Get Switches, then QUBO (variables, linear, quadratic, constant)
+switches = get_constraint_switches(
     ["x0", "x1", "x2", "x3"],
     ConstraintType.ONE_HOT,
     NetworkType.DIVIDE_AND_CONQUER,
 )
+qubo = switches_to_qubo(switches)
 
 print(qubo.variables, qubo.linear, qubo.quadratic, qubo.constant)
 ```
@@ -131,14 +133,15 @@ print(qubo.variables, qubo.linear, qubo.quadratic, qubo.constant)
 To work with Switch lists (e.g. for custom analysis or visualization):
 
 ```python
-from sparse_qubo.core.constraint import get_initial_nodes
+from sparse_qubo.core.constraint import ConstraintType, get_initial_nodes
 from sparse_qubo.core.network import NetworkType
+from sparse_qubo.core.switch import switches_to_qubo
 from sparse_qubo.networks.divide_and_conquer_network import DivideAndConquerNetwork
 
 variables = [f"x{i}" for i in range(4)]
 left_nodes, right_nodes = get_initial_nodes(variables, ConstraintType.ONE_HOT)
 switches = DivideAndConquerNetwork.generate_network(left_nodes, right_nodes)
-# switches is list[Switch]; use Switch.to_qubo(switches) to get QUBO
+# switches is list[Switch]; use switches_to_qubo(switches) to get QUBO
 ```
 
 ## Fixstars Amplify
